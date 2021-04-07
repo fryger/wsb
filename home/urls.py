@@ -1,6 +1,9 @@
 from django.urls import path
-from . import views
+from .views import MapView, CarDetail, GenericAPIView
 
 urlpatterns = [
-    path("<int:id>", views.index, name="index")
+    path("", MapView.as_view()),
+    path("api/car/<int:id>", GenericAPIView.as_view()),
+    path("car/<int:id>/", CarDetail.as_view()),
+
 ]
