@@ -1,7 +1,10 @@
 from django.db import models
 from datetime import datetime
 
+
 class Car(models.Model):
+    owner = models.ForeignKey(
+        'auth.User', related_name='cars', on_delete=models.CASCADE, default=1)
     fname = models.CharField(max_length=255)
     manufacturer = models.CharField(max_length=255)
     model = models.CharField(max_length=255)
@@ -10,6 +13,7 @@ class Car(models.Model):
 
     def __str__(self):
         return self.fname
+
 
 class Gps(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
