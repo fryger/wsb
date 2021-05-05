@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 class CarSerialzer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = '__all__'
+        fields = ('id', 'fname', 'manufacturer', 'model', 'mileage', 'vin')
 
 
 class GpsSerializer(serializers.ModelSerializer):
