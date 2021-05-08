@@ -139,3 +139,4 @@ cython_debug/
 
 #VSCODE workspace
 workspace.code-workspace
+filter.png

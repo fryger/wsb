@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from .models import Car, Gps
-from .serializers import CarSerialzer, GpsSerializer, UserSerializer
+from .serializers import CarSerializer, GpsSerializer, UserSerializer
 from rest_framework.parsers import JSONParser
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
@@ -14,6 +14,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
+from django_filters import rest_framework as filters
+from rest_framework.filters import SearchFilter
 
 
 class UserCreation(APIView):
@@ -28,75 +30,74 @@ class UserCreation(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CarView(APIView):
+class CarCollection(mixins.ListModelMixin,
+                    mixins.CreateModelMixin,
+                    generics.GenericAPIView):
+
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = request.user
-        cars = Car.objects.filter(owner=user)
-        serializer = CarSerialzer(cars, many=True)
-        return Response(serializer.data)
+    serializer_class = CarSerializer
 
-    def post(self, request):
-        serializer = CarSerialzer(data=request.data)
+    def get_queryset(self):
+        return Car.objects.filter(owner=self.request.user)
 
-        if serializer.is_valid():
-            serializer.save(owner=self.request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
-class CarDetail(APIView):
+class CarDetails(mixins.RetrieveModelMixin,
+                 mixins.UpdateModelMixin,
+                 mixins.DestroyModelMixin,
+                 generics.GenericAPIView):
+
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get_object(self, id, user):
-        try:
-            return Car.objects.get(id=id, owner=user)
-        except Car.DoesNotExist:
-            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+    serializer_class = CarSerializer
 
-    def get(self, request, id):
-        user = request.user
-        car = self.get_object(id, user)
-        serializer = CarSerialzer(car)
-        return Response(serializer.data)
+    def get_queryset(self):
+        return Car.objects.filter(owner=self.request.user)
 
-    def put(self, request, id, *args, **kwargs):
-        user = request.user
-        car = self.get_object(id, user)
-        serializer = CarSerialzer(car, data=request.data)
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
-        if serializer.is_valid():
-            serializer.save(owner=self.request.user)
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
-    def delete(self, request, id):
-        user = request.user
-        car = self.get_object(id, user)
-        car.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
-'''
-class GpsView(APIView):
+class GpsCollection(mixins.ListModelMixin,
+                    mixins.CreateModelMixin,
+                    generics.GenericAPIView):
+
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, id):
-        user = request.user
-        gps = Gps.objects.filter(car=Car.objects.get(id=id, owner=user))
-        serializer = GpsSerializer(gps, many=True)
-        return Response(serializer.data)
+    serializer_class = GpsSerializer
+    filter_backends = [filters.DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['datetime']
+    search_fields = ['datetime']
 
-    def post(self, request, id=None):
-        user = request.user
+    def get_queryset(self):
+        return Gps.objects.filter(car=Car.objects.get(id=self.kwargs['pk'], owner=self.request.user))
+
+    def create(self, request, *args, **kwargs):
         serializer = GpsSerializer(data=request.data)
-        request.data['car'] = Car.objects.get(id=id, owner=user).id
+        request.data['car'] = Car.objects.get(
+            id=self.kwargs['pk'], owner=self.request.user).id
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-'''
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)

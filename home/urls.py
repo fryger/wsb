@@ -1,11 +1,10 @@
-from django.urls import path, include
-from .views import CarView, CarDetail, GpsView, UserCreation
+from django.urls import path, re_path, include
+from .views import UserCreation, CarCollection, CarDetails, GpsCollection
 from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework.routers import DefaultRouter
 
 urlpatterns = [
-    path('register', UserCreation.as_view()),
-    path('token-auth/', obtain_auth_token, name='api_token_auth'),
-    path('cars/', CarView.as_view()),
-    path('cars/<int:id>/', CarDetail.as_view()),
-    path('cars/<int:id>/gps/', GpsView.as_view()),
+    path('cars', CarCollection.as_view()),
+    path('cars/<int:pk>/', CarDetails.as_view()),
+    path('cars/<int:pk>/gps', GpsCollection.as_view()),
 ]
