@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class CarSerialzer(serializers.ModelSerializer):
+class CarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
         fields = ('id', 'fname', 'manufacturer', 'model', 'mileage', 'vin')
