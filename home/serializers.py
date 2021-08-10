@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Car, Gps
+from .models import Car, Gps, Profile, Organization
 from django.contrib.auth.models import User
 
 
@@ -20,10 +20,23 @@ class UserSerializer(serializers.ModelSerializer):
 class CarSerializer(serializers.ModelSerializer):
     class Meta:
         model = Car
-        fields = ('id', 'fname', 'manufacturer', 'model', 'mileage', 'vin')
+        fields = ('id', 'name', 'manufacturer', 'model',
+                  'mileage', 'vin', 'driver', 'owner')
 
 
 class GpsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gps
+        fields = '__all__'
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
         fields = '__all__'
