@@ -4,11 +4,13 @@ from django.contrib.auth.models import User
 from django.db.models.deletion import SET_NULL
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.validators import MaxValueValidator
 
 
 class Organization(models.Model):
-    name = models.CharField(max_length=255)
-    nip = models.PositiveIntegerField()
+    name = models.CharField(max_length=255, unique=True)
+    nip = models.PositiveIntegerField(
+        unique=True, validators=[MaxValueValidator(9999999999)])
     city = models.CharField(max_length=255)
     street = models.CharField(max_length=255)
     street_num = models.CharField(max_length=10)
@@ -21,14 +23,15 @@ class Organization(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
-    org = models.ForeignKey(Organization, null=True, on_delete=models.RESTRICT)
+    org = models.ForeignKey(Organization, null=True,
+                            blank=True, on_delete=models.RESTRICT)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
         if created:
             Profile.objects.create(user=instance)
 
-    @receiver(post_save, sender=User)  # add this
+    @receiver(post_save, sender=User)
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
 
@@ -38,7 +41,7 @@ class Profile(models.Model):
 
 class Car(models.Model):
     owner = models.ForeignKey(
-        Organization, related_name='cars', on_delete=models.CASCADE, default=1)
+        Organization, related_name='cars', on_delete=models.CASCADE)
     driver = models.OneToOneField(
         Profile, null=True, blank=True, on_delete=models.RESTRICT)
     name = models.CharField(max_length=255)
