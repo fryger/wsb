@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, request
 from .models import Car, Gps, Profile, Organization
 from .serializers import CarSerializer, GpsSerializer, UserSerializer, ProfileSerializer, OrganizationSerializer
 from rest_framework.parsers import JSONParser
@@ -27,14 +27,36 @@ class NewCarCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.
     serializer_class = CarSerializer
 
     def get_queryset(self):
-        return Car.objects.all()
+        if self.request.user.profile.org.admin == self.request.user:
+            return Car.objects.filter(owner=self.request.user.profile.org)
+        else:
+            return Car.objects.filter(driver=self.request.user.profile, owner=self.request.user.profile.org)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
     @method_decorator(is_org_admin_or_unauthorized())
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class NewOrganizationCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    serializer_class = OrganizationSerializer
+
+    def get_queryset(self):
+        return Organization.objects.filter(name=self.request.user.profile.org)
+
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+        if self.request.user.profile.org is None:
+            return self.create(request, *args, **kwargs)
+        else:
+            return HttpResponse('User have organization', status=404)
 
 
 class UserCreation(APIView):

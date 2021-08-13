@@ -22,6 +22,12 @@ class CarSerializer(serializers.ModelSerializer):
         model = Car
         fields = ('id', 'name', 'manufacturer', 'model',
                   'mileage', 'vin', 'driver', 'owner')
+        read_only_fields = ('id', 'owner')
+
+    def create(self, validated_data):
+        if 'owner' not in validated_data:
+            validated_data['owner'] = self.context['request'].user.profile.org
+        return super(CarSerializer, self).create(validated_data)
 
 
 class GpsSerializer(serializers.ModelSerializer):
@@ -40,3 +46,9 @@ class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = '__all__'
+        read_only_fields = ('id', 'admin')
+
+    def create(self, validated_data):
+        if 'admin' not in validated_data:
+            validated_data['admin'] = self.context['request'].user
+        return super(OrganizationSerializer, self).create(validated_data)
