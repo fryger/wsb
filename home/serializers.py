@@ -37,9 +37,13 @@ class GpsSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    #usera = UserSerializer(read_only=True)
+    #usera = UserSerializer.CharField(source='User.name')
+    user = UserSerializer()
+
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ('user', 'id')
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
