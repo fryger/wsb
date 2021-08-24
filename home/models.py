@@ -1,12 +1,12 @@
 from io import SEEK_END
 from django.db import models
 from datetime import datetime
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 from django.db.models.deletion import SET_NULL
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.core.validators import MaxValueValidator
-
+from django.contrib.auth.models import AbstractUser
 
 class Organization(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -16,36 +16,55 @@ class Organization(models.Model):
     street = models.CharField(max_length=255)
     street_num = models.CharField(max_length=10)
     postal_code = models.PositiveIntegerField()
-    admin = models.OneToOneField(
-        User, null=True, blank=True, on_delete=SET_NULL)
 
     def __str__(self) -> str:
         return self.name
 
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
-    org = models.ForeignKey(Organization, null=True,
-                            blank=True, on_delete=models.SET_NULL)
-
-    @receiver(post_save, sender=User)
-    def create_user_profile(sender, instance, created, **kwargs):
-        if created:
-            Profile.objects.create(user=instance)
-
-    @receiver(post_save, sender=User)
-    def save_user_profile(sender, instance, **kwargs):
-        instance.profile.save()
-
-    def __str__(self):
-        return str(self.user)
-
+class User(AbstractUser):
+    PERMISSION = (
+        ('0','User'),
+        ('9','Admin')
+    )
+    organization = models.ForeignKey(Organization,blank=True, null=True, default=None, on_delete=models.SET_NULL)
+    organization_permission = models.CharField(choices=PERMISSION,blank=True, null=True, default=None, max_length=1, verbose_name='Acces level')
 
 class Car(models.Model):
     owner = models.ForeignKey(
         Organization, related_name='cars', on_delete=models.CASCADE)
     driver = models.OneToOneField(
-        Profile, null=True, blank=True, on_delete=models.RESTRICT)
+        User, null=True, blank=True, on_delete=models.SET_NULL)
+    name = models.CharField(max_length=255)
+    manufacturer = models.CharField(max_length=255)
+    model = models.CharField(max_length=255)
+    mileage = models.PositiveIntegerField()
+    vin = models.CharField(max_length=17)
+
+    def __str__(self):
+        return self.name
+'''
+class User(AbstractUser):
+    pass
+
+
+
+class OrgSettings(models.Model):
+    PERMISSION = (
+        ('0','User'),
+        ('9','Admin')
+    )
+
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    permission = models.CharField(choices=PERMISSION, default=0, max_length=1)
+    
+    def __str__(self) -> str:
+        return ('Permissions ' + self.user.username)
+
+class Car(models.Model):
+    owner = models.ForeignKey(
+        Organization, related_name='cars', on_delete=models.CASCADE)
+    driver = models.OneToOneField(
+        User, null=True, blank=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     manufacturer = models.CharField(max_length=255)
     model = models.CharField(max_length=255)
@@ -63,9 +82,4 @@ class Gps(models.Model):
     datetime = models.DateTimeField(default=datetime.now)
 
 
-@receiver(post_save, sender=Organization)
-def change_user_org(sender, instance, created, **kwargs):
-    if created:
-        profile = Profile.objects.get(user=instance.admin)
-        profile.org = instance
-        profile.save()
+'''

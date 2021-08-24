@@ -4,18 +4,177 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django_filters import rest_framework as filters
 from rest_framework import generics, mixins, status, viewsets
+from rest_framework import serializers
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.fields import SerializerMethodField
 from rest_framework.filters import SearchFilter
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import OR, AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
-from .decorators import is_org_admin_or_unauthorized
-from .models import Car, Gps, Organization, Profile
-from .serializers import (CarSerializer, GpsSerializer, OrganizationSerializer,
-                          ProfileSerializer, UserSerializer)
+from .decorators import have_orgization
+from .models import Organization, User
+from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer
+#from .serializers import (CarSerializer, GpsSerializer, OrganizationSerializer, ProfileSerializer, UserSerializer)
+
+
+
+class UserCreation(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class OrganizationCollection(mixins.ListModelMixin, mixins.CreateModelMixin, 
+                                mixins.UpdateModelMixin, mixins.DestroyModelMixin,generics.GenericAPIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrganizationSerializer
+
+    def get_queryset(self):
+        return Organization.objects.filter(id=self.request.user.organization.id)
+
+    def get_object(self):
+        return Organization.objects.get(pk=self.request.user.organization.id)
+
+    def perform_create(self, serializer):
+        serializer = serializer.save()
+        user = User.objects.get(id=self.request.user.id)
+        user.organization = serializer
+        user.organization_permission = 9
+        user.save()
+        return serializer
+
+    def perform_destroy(self, instance):
+        user = User.objects.get(id=self.request.user.id)
+        user.organization_permission = 0
+        user.save()
+        return super().perform_destroy(instance)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    @method_decorator(have_orgization())
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        if self.request.user.organization_permission == '9':
+            return self.update(request, *args, **kwargs)
+        else:
+            return HttpResponse("Unauthorized", status=401)
+    
+    def delete(self, request, *args, **kwargs):
+        if self.request.user.organization_permission == '9':
+            return self.destroy(request, *args, **kwargs)
+        else:
+            return HttpResponse("Unauthorized", status=401)
+
+class UserDetail(mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin,
+                    generics.GenericAPIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = ProfileSerializer
+
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)
+
+    def get_object(self):
+        return User.objects.get(pk=self.request.user.id)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+class DriverCollection(mixins.ListModelMixin, mixins.UpdateModelMixin,
+                        mixins.DestroyModelMixin,generics.GenericAPIView):
+    
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = DriverSerializer
+
+    def get_queryset(self):
+        return User.objects.filter(organization=self.request.user.organization)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        serializer = UserSerializer(data= request.data)
+        if serializer.is_valid():
+            driver = serializer.save()
+            driver.organization = self.request.user.organization
+            driver.organization_permission = 0 
+            driver.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DriverDetail(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
+                     mixins.DestroyModelMixin,generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = DriverSerializer
+
+    def get_queryset(self):
+        return User.objects.filter(organization=self.request.user.organization)
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+class UpdateDriverPassword(mixins.UpdateModelMixin ,generics.GenericAPIView):
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = DriverPasswordSerializer
+
+    def get_queryset(self):
+        return User.objects.filter(organization=self.request.user.organization)
+    
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+'''
+class UserCreation(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
+
+
+
+class DriverCreation(mixins.CreateModelMixin,generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
+    
+    
+    def post(self, request, *args, **kwargs):
+        
+        serializer = DriverSerializer(data={"organization": 1, "user": 1, "permission": "0"})
+        print(serializer.is_valid())
+        return self.create(request, *args, **kwargs)
 
 
 class NewCarCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
@@ -74,7 +233,7 @@ class NewOrganizationCollection(mixins.ListModelMixin, mixins.CreateModelMixin, 
         return self.update(request, *args, **kwargs)
 
 
-class NewProfileCollection(mixins.RetrieveModelMixin, generics.GenericAPIView):
+class NewProfileCollection(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -88,6 +247,9 @@ class NewProfileCollection(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *arg, **kwargs):
+        return self.update(request, *arg, **kwargs)
 
 
 class UserCreation(APIView):
@@ -176,3 +338,4 @@ class GpsCollection(mixins.ListModelMixin,
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+'''
