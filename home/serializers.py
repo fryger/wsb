@@ -1,5 +1,7 @@
+import uuid
+
 from rest_framework import serializers
-from .models import Organization, User
+from .models import Organization, User, Car, Gps
 from django.contrib.auth.password_validation import validate_password
 #from django.contrib.auth.models import User
 
@@ -9,7 +11,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username', 'password', 'email')
         extra_kwargs = {'password': {'write_only': True}}
-        
 
     def create(self, validated_data):
         password = validated_data.pop('password')
@@ -18,39 +19,67 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class ProfileSerializer(serializers.ModelSerializer):
     organization = serializers.StringRelatedField()
 
     class Meta:
         model = User
-        fields = ('username', 'email','organization','organization_permission')
+        fields = ('username', 'email', 'organization',
+                  'organization_permission')
         read_only_fields = ('orgnanization', 'organization_permission')
+
 
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = '__all__'
 
+
 class DriverSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id','username', 'email','organization_permission')
+        fields = ('id', 'username', 'email', 'organization_permission')
 
-    
 
 class DriverPasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['password']
-        extra_kwargs = {'password': {'write_only': True}} 
+        extra_kwargs = {'password': {'write_only': True}}
 
     def update(self, instance, validated_data):
         password = validated_data.pop('password')
         instance.set_password(password)
         instance.save()
         return instance
-    
+
+
+class CarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Car
+        fields = ('name', 'manufacturer', 'model', 'mileage', 'vin', 'driver')
+        read_only_fields = ['owner', 'token']
+
+    def create(self, validated_data):
+        if 'token' not in validated_data:
+            validated_data['token'] = uuid.uuid1().hex
+        if 'owner' not in validated_data:
+            validated_data['owner'] = self.context['request'].user.organization
+        return super(CarSerializer, self).create(validated_data)
+
+
+class GpsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Gps
+        fields = ('lat', 'lon', 'datetime')
+
+#    def create(self, validated_data):
+#        validated_data['car'] = Car.objects.get(
+#            id=self.context['request'].parser_context['kwargs']['pk'])
+#        return super(GpsSerializer, self).create(validated_data)
+
 
 '''
 class DriverSerializer(serializers.ModelSerializer):

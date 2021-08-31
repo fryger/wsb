@@ -1,3 +1,4 @@
+import re
 from django.http import HttpResponse, JsonResponse, request
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
@@ -16,10 +17,9 @@ from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
 from .decorators import have_orgization
-from .models import Organization, User
-from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer
+from .models import Car, Organization, User, Gps
+from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer
 #from .serializers import (CarSerializer, GpsSerializer, OrganizationSerializer, ProfileSerializer, UserSerializer)
-
 
 
 class UserCreation(APIView):
@@ -33,9 +33,10 @@ class UserCreation(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class OrganizationCollection(mixins.ListModelMixin, mixins.CreateModelMixin, 
-                                mixins.UpdateModelMixin, mixins.DestroyModelMixin,generics.GenericAPIView):
-    
+
+class OrganizationCollection(mixins.ListModelMixin, mixins.CreateModelMixin,
+                             mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = OrganizationSerializer
@@ -72,16 +73,17 @@ class OrganizationCollection(mixins.ListModelMixin, mixins.CreateModelMixin,
             return self.update(request, *args, **kwargs)
         else:
             return HttpResponse("Unauthorized", status=401)
-    
+
     def delete(self, request, *args, **kwargs):
         if self.request.user.organization_permission == '9':
             return self.destroy(request, *args, **kwargs)
         else:
             return HttpResponse("Unauthorized", status=401)
 
+
 class UserDetail(mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin,
-                    generics.GenericAPIView):
-    
+                 generics.GenericAPIView):
+
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = ProfileSerializer
@@ -101,9 +103,10 @@ class UserDetail(mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.DestroyM
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
+
 class DriverCollection(mixins.ListModelMixin, mixins.UpdateModelMixin,
-                        mixins.DestroyModelMixin,generics.GenericAPIView):
-    
+                       mixins.DestroyModelMixin, generics.GenericAPIView):
+
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = DriverSerializer
@@ -115,17 +118,18 @@ class DriverCollection(mixins.ListModelMixin, mixins.UpdateModelMixin,
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        serializer = UserSerializer(data= request.data)
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             driver = serializer.save()
             driver.organization = self.request.user.organization
-            driver.organization_permission = 0 
+            driver.organization_permission = 0
             driver.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class DriverDetail(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
-                     mixins.DestroyModelMixin,generics.GenericAPIView):
+                   mixins.DestroyModelMixin, generics.GenericAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = DriverSerializer
@@ -139,7 +143,8 @@ class DriverDetail(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
-class UpdateDriverPassword(mixins.UpdateModelMixin ,generics.GenericAPIView):
+
+class UpdateDriverPassword(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -147,9 +152,96 @@ class UpdateDriverPassword(mixins.UpdateModelMixin ,generics.GenericAPIView):
 
     def get_queryset(self):
         return User.objects.filter(organization=self.request.user.organization)
-    
+
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
+
+class CarCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = CarSerializer
+
+    def get_queryset(self):
+        if self.request.user.organization_permission == '9':
+            return Car.objects.filter(owner=self.request.user.organization)
+        else:
+            return Car.objects.filter(owner=self.request.user.organization, driver=self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    # Zablokować dla adminów organizacji
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+# Zablokować dla adminów organizacji
+
+
+class CarDetail(mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
+                mixins.UpdateModelMixin, generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = CarSerializer
+
+    def get_queryset(self):
+        return Car.objects.filter(owner=self.request.user.organization)
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        if User.objects.get(id=self.request.data['driver']).organization == self.request.user.organization:
+            return self.update(request, *args, **kwargs)
+        else:
+            return HttpResponse("Wrong driver id", status=404)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+class GpsCollection(mixins.ListModelMixin, generics.GenericAPIView):
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = GpsSerializer
+
+    filter_backends = [filters.DjangoFilterBackend, SearchFilter]
+    filterset_fields = ['datetime']
+    search_fields = ['datetime']
+
+    def get_queryset(self):
+        if self.request.user.organization_permission == '9':
+            return Gps.objects.filter(car=Car.objects.get(id=self.kwargs['pk'],
+                                                          owner=self.request.user.organization))
+        else:
+            return Gps.objects.filter(car=Car.objects.get(id=self.kwargs['pk'],
+                                                          owner=self.request.user.organization,
+                                                          driver=self.request.user))
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+# walidacja czy to jest właściciel
+#    def post(self, request, *args, **kwargs):
+#        return self.create(request, *args, **kwargs)
+
+
+class GpsPointCreation(APIView):
+    permission_classes = [AllowAny]
+
+    def get_object(self):
+        return Car.objects.get('')
+
+    def post(self, request):
+        serializer = CarSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 '''
 class UserCreation(APIView):
     permission_classes = [AllowAny]
