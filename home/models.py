@@ -1,6 +1,6 @@
 from io import SEEK_END
 from django.db import models
-from datetime import datetime
+from datetime import datetime, date
 #from django.contrib.auth.models import User
 from django.db.models.deletion import SET_NULL
 from django.db.models.signals import post_save, pre_delete
@@ -55,6 +55,23 @@ class Gps(models.Model):
     lat = models.FloatField()
     lon = models.FloatField()
     datetime = models.DateTimeField(default=datetime.now)
+
+class CarService(models.Model):
+    name = models.CharField(max_length=255)
+    street = models.CharField(max_length=255)
+    street_number = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+class Maintenance(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    driver = models.ForeignKey(User, on_delete=models.CASCADE)
+    shop = models.ForeignKey(CarService, null=True, on_delete=models.SET_NULL)
+    title = models.CharField(max_length=255)
+    description = models.CharField(max_length=2000)
+    mileage = models.PositiveIntegerField(null=False)
+    date = models.DateField(null=False)
+
 
 
 '''

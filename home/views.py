@@ -17,8 +17,8 @@ from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
 from .decorators import have_orgization
-from .models import Car, Organization, User, Gps
-from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer
+from .models import Car, Maintenance, Organization, User, Gps
+from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer
 #from .serializers import (CarSerializer, GpsSerializer, OrganizationSerializer, ProfileSerializer, UserSerializer)
 
 
@@ -227,21 +227,38 @@ class GpsCollection(mixins.ListModelMixin, generics.GenericAPIView):
 #        return self.create(request, *args, **kwargs)
 
 
-class GpsPointCreation(APIView):
+class GpsPointCreation(mixins.CreateModelMixin ,generics.GenericAPIView):
     permission_classes = [AllowAny]
+    serializer_class = GpsSerializer
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class MaintenanceCollection(mixins.ListModelMixin,mixins.CreateModelMixin ,generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = MaintenanceSerializer
+
+    def get_queryset(self):
+        return Maintenance.objects.filter(car = Car.objects.get(id=self.kwargs['pk']))
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+class MaintenanceCollection(mixins.RetrieveModelMixin,mixins.CreateModelMixin ,generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = MaintenanceDetailSerializer
 
     def get_object(self):
-        return Car.objects.get('')
+        return Maintenance.objects.get(pk=self.kwargs['pk2'])
 
-    def post(self, request):
-        serializer = CarSerializer(data=request.data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs) 
 '''
 class UserCreation(APIView):
     permission_classes = [AllowAny]

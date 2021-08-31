@@ -1,7 +1,7 @@
 import uuid
 
-from rest_framework import serializers
-from .models import Organization, User, Car, Gps
+from rest_framework import fields, serializers
+from .models import CarService, Organization, User, Car, Gps, Maintenance
 from django.contrib.auth.password_validation import validate_password
 #from django.contrib.auth.models import User
 
@@ -75,10 +75,34 @@ class GpsSerializer(serializers.ModelSerializer):
         model = Gps
         fields = ('lat', 'lon', 'datetime')
 
-#    def create(self, validated_data):
-#        validated_data['car'] = Car.objects.get(
-#            id=self.context['request'].parser_context['kwargs']['pk'])
-#        return super(GpsSerializer, self).create(validated_data)
+    def create(self, validated_data):
+        validated_data['car'] = Car.objects.get(token=self.context['request'].META['HTTP_CAR'])
+        return super(GpsSerializer, self).create(validated_data)
+
+
+class MaintenanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Maintenance
+        fields = ('title', 'mileage', 'date')
+
+    def create(self, validated_data):
+        car = Car.objects.get(id=self.context.get('request').parser_context.get('kwargs').get('pk'))
+        validated_data['car'] = car
+        validated_data['driver'] = car.driver
+        return super().create(validated_data)
+
+class ShopSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CarService
+        fields = '__all__'
+
+class MaintenanceDetailSerializer(serializers.ModelSerializer):
+    driver = DriverSerializer(read_only=True)
+    shop = ShopSerializer(read_only=True)
+    class Meta:
+        model = Maintenance
+        fields = ('title','description', 'mileage','driver','shop', 'date')    
+        depth = 1   
 
 
 '''

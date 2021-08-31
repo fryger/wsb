@@ -1,8 +1,10 @@
 from django.contrib import admin
-from .models import Organization, User, Car, Gps
+from .models import Organization, User, Car, Gps, Maintenance, CarService
 
 admin.site.register(Car)
 admin.site.register(Gps)
 admin.site.register(Organization)
 admin.site.register(User)
+admin.site.register(Maintenance)
+admin.site.register(CarService)
 # admin.site.register(OrgSettings)
