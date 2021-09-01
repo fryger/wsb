@@ -1,5 +1,6 @@
 import re
 from django.http import HttpResponse, JsonResponse, request
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -17,8 +18,8 @@ from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
 from .decorators import have_orgization
-from .models import Car, Maintenance, Organization, User, Gps
-from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer
+from .models import Attachments, Car, Maintenance, Organization, User, Gps
+from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer
 #from .serializers import (CarSerializer, GpsSerializer, OrganizationSerializer, ProfileSerializer, UserSerializer)
 
 
@@ -236,7 +237,7 @@ class GpsPointCreation(mixins.CreateModelMixin ,generics.GenericAPIView):
 
 
 class MaintenanceCollection(mixins.ListModelMixin,mixins.CreateModelMixin ,generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
+    #authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = MaintenanceSerializer
 
@@ -249,7 +250,7 @@ class MaintenanceCollection(mixins.ListModelMixin,mixins.CreateModelMixin ,gener
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
-class MaintenanceCollection(mixins.RetrieveModelMixin,mixins.CreateModelMixin ,generics.GenericAPIView):
+class MaintenanceDetails(mixins.RetrieveModelMixin,mixins.CreateModelMixin ,generics.GenericAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = MaintenanceDetailSerializer
@@ -259,6 +260,37 @@ class MaintenanceCollection(mixins.RetrieveModelMixin,mixins.CreateModelMixin ,g
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs) 
+
+
+
+class MyFileView(APIView):
+	    # MultiPartParser AND FormParser
+		# https://www.django-rest-framework.org/api-guide/parsers/#multipartparser
+		# "You will typically want to use both FormParser and MultiPartParser
+		# together in order to fully support HTML form data."
+        parser_classes = (MultiPartParser, FormParser)
+        def post(self, request, *args, **kwargs):  
+            file_serializer = MyFileSerializer(data=request.data)
+            if file_serializer.is_valid():
+                file_serializer.save()
+                return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
 '''
 class UserCreation(APIView):
     permission_classes = [AllowAny]
