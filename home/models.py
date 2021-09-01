@@ -63,6 +63,11 @@ class CarService(models.Model):
 
     def __str__(self):
         return self.name
+
+class Attachments(models.Model):
+    file = models.FileField()
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
 class Maintenance(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     driver = models.ForeignKey(User, on_delete=models.CASCADE)

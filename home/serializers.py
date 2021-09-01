@@ -1,9 +1,37 @@
 import uuid
 
 from rest_framework import fields, serializers
-from .models import CarService, Organization, User, Car, Gps, Maintenance
+from .models import Attachments, CarService, Organization, User, Car, Gps, Maintenance
 from django.contrib.auth.password_validation import validate_password
 #from django.contrib.auth.models import User
+
+class DynamicFieldsModelSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    A HyperlinkedModelSerializer that takes an additional `fields` argument that
+    controls which fields should be displayed.
+    """
+
+    def __init__(self, *args, **kwargs):
+        # Don't pass the 'fields' arg up to the superclass
+        fields = kwargs.pop('fields', None)
+        exclude = kwargs.pop('exclude', None)
+        # Instantiate the superclass normally
+        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
+
+        if fields:
+            # Drop any fields that are not specified in the `fields` argument.
+            allowed = set(fields)
+            existing = set(self.fields.keys())
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
+        if exclude:
+            # Drop fields that are specified in the `exclude` argument.
+            excluded = set(exclude)
+            for field_name in excluded:
+                try:
+                    self.fields.pop(field_name)
+                except KeyError:
+                    pass
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -36,7 +64,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class DriverSerializer(serializers.ModelSerializer):
+class DriverSerializer(DynamicFieldsModelSerializer, serializers.ModelSerializer):
 
     class Meta:
         model = User
@@ -83,7 +111,7 @@ class GpsSerializer(serializers.ModelSerializer):
 class MaintenanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Maintenance
-        fields = ('title', 'mileage', 'date')
+        fields = ('title', 'mileage', 'date', 'shop')
 
     def create(self, validated_data):
         car = Car.objects.get(id=self.context.get('request').parser_context.get('kwargs').get('pk'))
@@ -94,14 +122,19 @@ class MaintenanceSerializer(serializers.ModelSerializer):
 class ShopSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarService
-        fields = '__all__'
+        fields = ('name', 'street', 'street_number')
 
-class MaintenanceDetailSerializer(serializers.ModelSerializer):
-    driver = DriverSerializer(read_only=True)
+class MyFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attachments
+        fields = ('file', 'uploaded_at')
+
+class MaintenanceDetailSerializer(serializers.HyperlinkedModelSerializer):
+    driver = DriverSerializer(read_only=True, exclude=('id',))
     shop = ShopSerializer(read_only=True)
     class Meta:
         model = Maintenance
-        fields = ('title','description', 'mileage','driver','shop', 'date')    
+        fields = ('title','description', 'mileage','driver','shop', 'date') 
         depth = 1   
 
 
