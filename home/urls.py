@@ -4,8 +4,6 @@ from django.urls import path, re_path, include
 from .views import UserCreation, OrganizationCollection, UserDetail, DriverCollection, DriverDetail, UpdateDriverPassword, CarCollection, CarDetail, GpsCollection, GpsPointCreation, MaintenanceCollection, MaintenanceDetails, MyFileView
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import obtain_auth_token
-from django.conf import settings
-
 
 
 urlpatterns = [

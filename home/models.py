@@ -1,8 +1,10 @@
+from uuid import uuid1, uuid4
+import os
 from io import SEEK_END
 from django.db import models
 from datetime import datetime, date
 #from django.contrib.auth.models import User
-from django.db.models.deletion import SET_NULL
+from django.db.models.deletion import CASCADE, SET_NULL
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.core.validators import MaxValueValidator
@@ -56,6 +58,7 @@ class Gps(models.Model):
     lon = models.FloatField()
     datetime = models.DateTimeField(default=datetime.now)
 
+
 class CarService(models.Model):
     name = models.CharField(max_length=255)
     street = models.CharField(max_length=255)
@@ -64,9 +67,6 @@ class CarService(models.Model):
     def __str__(self):
         return self.name
 
-class Attachments(models.Model):
-    file = models.FileField()
-    uploaded_at = models.DateTimeField(auto_now_add=True)
 
 class Maintenance(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
@@ -77,6 +77,17 @@ class Maintenance(models.Model):
     mileage = models.PositiveIntegerField(null=False)
     date = models.DateField(null=False)
 
+
+def get_file_path(instance, filename):
+    #ext = filename.split('.')[-1]
+    filename = "%s/%s/%s" % (uuid1().hex, uuid4().hex, filename)
+    return filename
+
+
+class Attachments(models.Model):
+    case = models.ForeignKey(Maintenance, on_delete=CASCADE)
+    file = models.FileField(upload_to=get_file_path)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
 
 '''

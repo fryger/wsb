@@ -5,6 +5,7 @@ from .models import Attachments, CarService, Organization, User, Car, Gps, Maint
 from django.contrib.auth.password_validation import validate_password
 #from django.contrib.auth.models import User
 
+
 class DynamicFieldsModelSerializer(serializers.HyperlinkedModelSerializer):
     """
     A HyperlinkedModelSerializer that takes an additional `fields` argument that
@@ -104,7 +105,8 @@ class GpsSerializer(serializers.ModelSerializer):
         fields = ('lat', 'lon', 'datetime')
 
     def create(self, validated_data):
-        validated_data['car'] = Car.objects.get(token=self.context['request'].META['HTTP_CAR'])
+        validated_data['car'] = Car.objects.get(
+            token=self.context['request'].META['HTTP_CAR'])
         return super(GpsSerializer, self).create(validated_data)
 
 
@@ -114,28 +116,41 @@ class MaintenanceSerializer(serializers.ModelSerializer):
         fields = ('title', 'mileage', 'date', 'shop')
 
     def create(self, validated_data):
-        car = Car.objects.get(id=self.context.get('request').parser_context.get('kwargs').get('pk'))
+        car = Car.objects.get(id=self.context.get(
+            'request').parser_context.get('kwargs').get('pk'))
         validated_data['car'] = car
         validated_data['driver'] = car.driver
         return super().create(validated_data)
+
 
 class ShopSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarService
         fields = ('name', 'street', 'street_number')
 
+
 class MyFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attachments
-        fields = ('file', 'uploaded_at')
+        fields = ('file', 'uploaded_at', 'case')
+        extra_kwargs = {'case': {'write_only': True}}
+
 
 class MaintenanceDetailSerializer(serializers.HyperlinkedModelSerializer):
     driver = DriverSerializer(read_only=True, exclude=('id',))
     shop = ShopSerializer(read_only=True)
+    attachments = serializers.SerializerMethodField()
+
     class Meta:
         model = Maintenance
-        fields = ('title','description', 'mileage','driver','shop', 'date') 
-        depth = 1   
+        fields = ('title', 'description', 'mileage',
+                  'driver', 'shop', 'date', 'attachments')
+        depth = 1
+
+    def get_attachments(self, obj):
+        attachments = obj.attachments_set.all()
+        response = MyFileSerializer(attachments, many=True).data
+        return response
 
 
 '''

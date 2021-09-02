@@ -8,4 +8,5 @@ admin.site.register(User)
 admin.site.register(Maintenance)
 admin.site.register(CarService)
 admin.site.register(Attachments)
+
 # admin.site.register(OrgSettings)

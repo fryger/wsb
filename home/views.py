@@ -228,7 +228,7 @@ class GpsCollection(mixins.ListModelMixin, generics.GenericAPIView):
 #        return self.create(request, *args, **kwargs)
 
 
-class GpsPointCreation(mixins.CreateModelMixin ,generics.GenericAPIView):
+class GpsPointCreation(mixins.CreateModelMixin, generics.GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = GpsSerializer
 
@@ -236,13 +236,13 @@ class GpsPointCreation(mixins.CreateModelMixin ,generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
-class MaintenanceCollection(mixins.ListModelMixin,mixins.CreateModelMixin ,generics.GenericAPIView):
+class MaintenanceCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     #authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = MaintenanceSerializer
 
     def get_queryset(self):
-        return Maintenance.objects.filter(car = Car.objects.get(id=self.kwargs['pk']))
+        return Maintenance.objects.filter(car=Car.objects.get(id=self.kwargs['pk']))
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -250,7 +250,8 @@ class MaintenanceCollection(mixins.ListModelMixin,mixins.CreateModelMixin ,gener
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
-class MaintenanceDetails(mixins.RetrieveModelMixin,mixins.CreateModelMixin ,generics.GenericAPIView):
+
+class MaintenanceDetails(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = MaintenanceDetailSerializer
@@ -259,36 +260,23 @@ class MaintenanceDetails(mixins.RetrieveModelMixin,mixins.CreateModelMixin ,gene
         return Maintenance.objects.get(pk=self.kwargs['pk2'])
 
     def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs) 
-
+        return self.retrieve(request, *args, **kwargs)
 
 
 class MyFileView(APIView):
-	    # MultiPartParser AND FormParser
-		# https://www.django-rest-framework.org/api-guide/parsers/#multipartparser
-		# "You will typically want to use both FormParser and MultiPartParser
-		# together in order to fully support HTML form data."
-        parser_classes = (MultiPartParser, FormParser)
-        def post(self, request, *args, **kwargs):  
-            file_serializer = MyFileSerializer(data=request.data)
-            if file_serializer.is_valid():
-                file_serializer.save()
-                return Response(file_serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # MultiPartParser AND FormParser
+    # https://www.django-rest-framework.org/api-guide/parsers/#multipartparser
+    # "You will typically want to use both FormParser and MultiPartParser
+    # together in order to fully support HTML form data."
+    parser_classes = (MultiPartParser, FormParser)
 
-        
-
-
-
-
-
-
-
-
-
-
-
+    def post(self, request, *args, **kwargs):
+        file_serializer = MyFileSerializer(data=request.data)
+        if file_serializer.is_valid():
+            file_serializer.save()
+            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 '''
