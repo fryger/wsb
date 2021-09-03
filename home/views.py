@@ -19,7 +19,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .decorators import have_orgization
 from .models import Attachments, Car, Maintenance, Organization, User, Gps
-from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer
+from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer
 #from .serializers import (CarSerializer, GpsSerializer, OrganizationSerializer, ProfileSerializer, UserSerializer)
 
 
@@ -28,6 +28,18 @@ class UserCreation(APIView):
 
     def post(self, request):
         serializer = UserSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OrganizationCreationView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = OrganizationCreationSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save()
@@ -85,7 +97,7 @@ class OrganizationCollection(mixins.ListModelMixin, mixins.CreateModelMixin,
 class UserDetail(mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin,
                  generics.GenericAPIView):
 
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = ProfileSerializer
 

@@ -1,9 +1,10 @@
 import uuid
 
 from rest_framework import fields, serializers
+from rest_framework.parsers import DataAndFiles
 from .models import Attachments, CarService, Organization, User, Car, Gps, Maintenance
 from django.contrib.auth.password_validation import validate_password
-#from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 
 
 class DynamicFieldsModelSerializer(serializers.HyperlinkedModelSerializer):
@@ -38,7 +39,7 @@ class DynamicFieldsModelSerializer(serializers.HyperlinkedModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password', 'email')
+        fields = ('username', 'password', 'email', 'first_name', 'last_name')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -63,6 +64,38 @@ class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = '__all__'
+
+
+class OrganizationCreationSerializer(serializers.ModelSerializer):
+
+    class OrganizationTmpSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Organization
+            fields = '__all__'
+
+    organization = OrganizationTmpSerializer()
+
+    class Meta:
+        model = User
+        fields = ('username', 'password', 'email',
+                  'first_name', 'last_name', 'organization', 'organization_permission')
+        read_only_fields = ['organization_permission', ]
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        data = validated_data.pop('organization')
+        organization = Organization(**data)
+        organization.save()
+
+        validated_data['organization'] = organization
+        validated_data['organization_permission'] = '9'
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)
+
+        user.save()
+
+        return user
 
 
 class DriverSerializer(DynamicFieldsModelSerializer, serializers.ModelSerializer):

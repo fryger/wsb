@@ -10,7 +10,6 @@ def have_orgization():
                 else:
                     return HttpResponse('User already have organization', status=401)
             except Exception as e:
-                print(e)
-                return HttpResponse("Unauthorized", status=401)
+                return HttpResponse(e, status=401)
         return wrapper
     return decorator

@@ -1,7 +1,7 @@
 from home.models import User
 from django.urls import path, re_path, include
 #from .views import NewProfileCollection, UserCreation, CarCollection, CarDetails, GpsCollection, NewCarCollection, NewOrganizationCollection
-from .views import UserCreation, OrganizationCollection, UserDetail, DriverCollection, DriverDetail, UpdateDriverPassword, CarCollection, CarDetail, GpsCollection, GpsPointCreation, MaintenanceCollection, MaintenanceDetails, MyFileView
+from .views import UserCreation, OrganizationCollection, UserDetail, DriverCollection, DriverDetail, UpdateDriverPassword, CarCollection, CarDetail, GpsCollection, GpsPointCreation, MaintenanceCollection, MaintenanceDetails, MyFileView, OrganizationCreationView
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_simplejwt import views as jwt_views
@@ -12,7 +12,8 @@ urlpatterns = [
     path('token/refresh', jwt_views.TokenRefreshView.as_view(),
          name='token_refresh'),
     path('login', obtain_auth_token),
-    path('register', UserCreation.as_view()),
+    #path('register', UserCreation.as_view()),
+    path('register', OrganizationCreationView.as_view()),
     path('organization', OrganizationCollection.as_view()),
     path('profile', UserDetail.as_view()),
     path('drivers', DriverCollection.as_view()),

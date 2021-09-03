@@ -8,9 +8,7 @@ export default {};
 
 <style>
 html {
-  overflow: hidden; /* Hide scrollbars */
-  overflow-y: hidden; /* Hide vertical scrollbar */
-  overflow-x: hidden; /* Hide horizontal scrollbar */
+  overflow: auto;
 }
 #app {
   background: #355c7d; /* fallback for old browsers */
