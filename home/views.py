@@ -50,7 +50,7 @@ class OrganizationCreationView(APIView):
 class OrganizationCollection(mixins.ListModelMixin, mixins.CreateModelMixin,
                              mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
 
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = OrganizationSerializer
 

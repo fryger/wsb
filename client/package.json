@@ -11,8 +11,11 @@
   "dependencies": {
     "@nuxtjs/auth-next": "5.0.0-1624817847.21691f1",
     "@nuxtjs/axios": "^5.13.6",
+    "@syncfusion/ej2-vue-maps": "^19.2.59",
     "core-js": "^3.15.1",
+    "leaflet": "^1.7.1",
     "nuxt": "^2.15.7",
+    "vue2-leaflet": "^2.7.1",
     "vuelidate": "^0.7.6",
     "vuetify": "^2.5.5"
   },

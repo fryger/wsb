@@ -212,7 +212,6 @@ import {
   numeric,
   maxLength
 } from "vuelidate/lib/validators";
-
 export default {
   mixins: [validationMixin],
   validations: {
@@ -357,12 +356,18 @@ export default {
     street: "",
     streetNum: "",
     citi: "",
-    postal: "",
-    rules: {
-      required: v => !!v || "Fields required"
-    }
+    postal: ""
   }),
   methods: {
+    loginUser: async function() {
+      const response = await this.$auth.loginWith("local", {
+        data: { username: this.login, password: this.password }
+      });
+      await this.$auth.setUserToken(
+        response.data.access,
+        response.data.refresh
+      );
+    },
     async register() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
@@ -383,29 +388,26 @@ export default {
           organization: organization
         };
 
-        const res = await this.$axios.post("/register", data).catch(error => {
-          if (error.response) {
-            console.log(error.response);
-            try {
-              this.alertData = [
-                error.response.data["username"][0],
-                error.response.data["email"][0],
-                error.response.data["organization"]["nip"][0],
-                error.response.data["organization"]["name"][0]
-              ];
-              this.alertData = this.alertData.filter(function(element) {
-                return element !== undefined;
-              });
-            } catch (e) {
-              console.log(e);
+        const res = await this.$axios
+          .post("/register", data)
+          .then(res => {
+            this.loginUser();
+          })
+          .catch(error => {
+            if (error.response) {
+              try {
+                let alertData = [];
+                JSON.stringify(error.response.data, (key, value) => {
+                  if (key === "0") alertData.push(value);
+                  return value;
+                });
+                this.alertData = alertData;
+              } catch (e) {}
+              this.alert = true;
+              setTimeout(() => (this.alert = false), 5000);
             }
-
-            this.alert = true;
-            setTimeout(() => (this.alert = false), 3000);
-            console.log(this.alertData);
-          }
-        });
-        this.$router.push("/");
+          })
+          .then();
       }
     }
   },

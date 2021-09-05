@@ -6,10 +6,11 @@
 export default {};
 </script>
 
-<style>
+<style scoped>
 html {
   overflow: auto;
 }
+
 #app {
   background: #355c7d; /* fallback for old browsers */
   background: -webkit-linear-gradient(
