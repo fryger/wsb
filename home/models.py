@@ -19,6 +19,7 @@ class Organization(models.Model):
     street = models.CharField(max_length=255)
     street_num = models.CharField(max_length=10)
     postal_code = models.PositiveIntegerField()
+    logo = models.ImageField(null=True, default=None)
 
     def __str__(self) -> str:
         return self.name
