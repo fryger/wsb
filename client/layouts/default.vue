@@ -2,19 +2,10 @@
   <v-app>
     <v-navigation-drawer
       app
-      dark
       permanent
       mini-variant="mini"
       :mini-variant.sync="mini"
     >
-      <v-list-item v-if="this.mini == false" align="center" justify="center">
-        <v-list-item-content>
-          <v-list-item-title class="text-h4">
-            {{ organization }}
-          </v-list-item-title>
-          <v-list-item-subtitle>{{ access }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
       <v-list>
         <v-list-item link class="px-2">
           <v-list-item-avatar>
@@ -29,15 +20,9 @@
             <v-list-item-subtitle>{{ email }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item-content
-          ><v-btn block elevation="2" small @click="logout">
-            Logout</v-btn
-          ></v-list-item-content
-        >
       </v-list>
-      <v-divider></v-divider>
-      <v-list rounded>
-        <v-list-item-group v-model="selectedItem" color="accent">
+      <v-list shaped>
+        <v-list-item-group v-model="selectedItem" color="#ff964f">
           <v-list-item
             v-for="([icon, text, href], i) in items"
             :key="i"
@@ -68,7 +53,6 @@
 <script>
 export default {
   data: () => ({
-    //mini: true,
     selectedItem: "",
     username: "",
     email: "",
@@ -77,7 +61,9 @@ export default {
     items: [
       ["mdi-view-dashboard-variant", "Dashboard", "/dashboard"],
       ["mdi-domain", "Organization", "/organization"],
-      ["mdi-map", "Map", "/map"]
+      ["mdi-map", "Map", "/map"],
+      ["mdi-account", "Drivers", "/users"],
+      ["mdi-car", "Cars", "/cars"]
     ]
   }),
   mounted() {

@@ -102,7 +102,8 @@ class DriverSerializer(DynamicFieldsModelSerializer, serializers.ModelSerializer
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'organization_permission')
+        fields = ('id', 'username', 'email', 'first_name',
+                  'last_name', 'organization_permission')
 
 
 class DriverPasswordSerializer(serializers.ModelSerializer):

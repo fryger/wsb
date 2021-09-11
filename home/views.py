@@ -12,7 +12,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.fields import SerializerMethodField
 from rest_framework.filters import SearchFilter
 from rest_framework.parsers import JSONParser
-from rest_framework.permissions import OR, AllowAny, IsAuthenticated
+from rest_framework.permissions import OR, AllowAny, IsAuthenticated, DjangoModelPermissions, DjangoObjectPermissions
+from .permissions import BaseDjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
@@ -120,8 +121,8 @@ class UserDetail(mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.DestroyM
 class DriverCollection(mixins.ListModelMixin, mixins.UpdateModelMixin,
                        mixins.DestroyModelMixin, generics.GenericAPIView):
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
+    permission_classes = [BaseDjangoModelPermissions]
     serializer_class = DriverSerializer
 
     def get_queryset(self):
