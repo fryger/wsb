@@ -40,7 +40,6 @@
             </v-card>
           </v-hover>
         </v-col>
-
         <v-col align="center" md="8">
           <v-card color="#f8f8f8">
             <div id="mapid" style="height: 50vh"></div>
@@ -85,11 +84,7 @@
                     <v-btn color="blue darken-1" text @click="dialog = false">
                       Close
                     </v-btn>
-                    <v-btn
-                      color="blue darken-1"
-                      text
-                      @click="updateOrganization"
-                    >
+                    <v-btn color="blue darken-1" text>
                       Save
                     </v-btn>
                   </v-card-actions>
