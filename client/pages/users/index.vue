@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-icon slot="prependIcon" class="pr-3" large>mdi-magnify</v-icon>
-      <v-text-field label="Search" height="50"></v-text-field>
+      <v-text-field label="Search" height="50" v-model="search"></v-text-field>
     </v-row>
     <v-row>
       <v-btn
@@ -56,6 +56,7 @@
 <script>
 import UserReg from "../../components/UserReg.vue";
 import Driver from "../../components/Driver.vue";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
@@ -63,15 +64,19 @@ export default {
   },
   data() {
     return {
-      dialog: false
+      dialog: false,
+      search: ""
     };
   },
   created() {
     this.$store.dispatch("driver/getDriver");
   },
   computed: {
+    ...mapGetters({ searchDriver: "driver/searchDriver" }),
     drivers() {
-      return this.$store.state.driver.list;
+      return this.search == ""
+        ? this.$store.state.driver.list
+        : this.searchDriver(this.search.toLowerCase());
     }
   }
 };

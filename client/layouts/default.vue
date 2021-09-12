@@ -43,9 +43,7 @@
     </v-navigation-drawer>
 
     <v-main>
-      <v-container fluid>
-        <Nuxt />
-      </v-container>
+      <Nuxt />
     </v-main>
   </v-app>
 </template>
@@ -102,4 +100,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+html {
+  overflow-y: auto;
+}
+</style>
