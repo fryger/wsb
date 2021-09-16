@@ -26,5 +26,12 @@ export const getters = {
         r.first_name.toLowerCase().includes(f) ||
         r.last_name.toLowerCase().includes(f)
     );
+  },
+  idDriver: state => id => {
+    try {
+      return state.list.filter(driver => driver.id == id)[0]["username"];
+    } catch (e) {
+      return "";
+    }
   }
 };

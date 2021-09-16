@@ -7,7 +7,7 @@ from datetime import datetime, date
 from django.db.models.deletion import CASCADE, SET_NULL
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
-from django.core.validators import MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 
 
@@ -38,8 +38,32 @@ class User(AbstractUser):
 
 
 class Car(models.Model):
+    BODY = (
+        ('Hatchback', 'Hatchback'),
+        ('Sedan', 'Sedan'),
+        ('SUV', 'SUV'),
+        ('Sedan', 'Sedan'),
+        ('Convertible', 'Convertible'),
+        ('Estate', 'Estate'),
+        ('VAN', 'VAN'),
+    )
+    STATUS = (
+        ('In Use', 'In Use'),
+        ('Out of order', 'Out of order'),
+        ('Service', 'Service'),
+    )
+    FUEL = (
+        ('Petrol', 'Petrol'),
+        ('BIO', 'BIO'),
+        ('LPG', 'LPG'),
+        ('Diesel', 'Diesel'),
+        ('ELECTRIC', 'Electric'),
+        ('HYBRID', 'Hybrid')
+    )
+
     owner = models.ForeignKey(
         Organization, related_name='cars', on_delete=models.CASCADE)
+    body = models.CharField(choices=BODY, max_length=11)
     driver = models.OneToOneField(
         User, null=True, blank=True, on_delete=models.SET_NULL)
     token = models.CharField(
@@ -49,6 +73,12 @@ class Car(models.Model):
     model = models.CharField(max_length=255)
     mileage = models.PositiveIntegerField()
     vin = models.CharField(max_length=17)
+    status = models.CharField(choices=STATUS, max_length=12)
+    year = models.IntegerField(validators=[
+        MinValueValidator(1886), MaxValueValidator(9999)])
+    fuel = models.CharField(choices=FUEL, max_length=8)
+    engine = models.FloatField(
+        validators=[MinValueValidator(0.0), MaxValueValidator(50.0)])
 
     def __str__(self):
         return self.name

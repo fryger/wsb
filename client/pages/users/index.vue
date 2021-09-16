@@ -25,14 +25,9 @@
       />
     </v-row>
     <!-- Add driver form -->
-    <v-dialog
-      transition="fade-transition"
-      max-width="800"
-      style="z-index:9999;"
-      v-model="dialog"
-    >
-      <v-card>
-        <v-card-title class="justify-center text-h3 mb-4"
+    <v-navigation-drawer v-model="dialog" absolute right width="500">
+      <v-card height="100%" color="#f8f8f8">
+        <v-card-title class="justify-center text-h3 pt-10 mb-4"
           >Register new driver</v-card-title
         >
         <UserReg v-on:close-dialog="dialog = false" url="/drivers" />
@@ -49,7 +44,7 @@
           </v-btn>
         </v-card-action>
       </v-card>
-    </v-dialog>
+    </v-navigation-drawer>
   </v-container>
 </template>
 

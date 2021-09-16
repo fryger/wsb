@@ -120,12 +120,14 @@ class DriverPasswordSerializer(serializers.ModelSerializer):
 
 
 class CarSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Car
-        fields = ('name', 'manufacturer', 'model', 'mileage', 'vin', 'driver')
+        fields = '__all__'
         read_only_fields = ['owner', 'token']
 
     def create(self, validated_data):
+
         if 'token' not in validated_data:
             validated_data['token'] = uuid.uuid1().hex
         if 'owner' not in validated_data:

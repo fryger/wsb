@@ -172,7 +172,7 @@ class UpdateDriverPassword(mixins.UpdateModelMixin, generics.GenericAPIView):
 
 
 class CarCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = CarSerializer
 
