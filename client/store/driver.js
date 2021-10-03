@@ -29,7 +29,11 @@ export const getters = {
   },
   idDriver: state => id => {
     try {
-      return state.list.filter(driver => driver.id == id)[0]["username"];
+      return (
+        state.list.filter(driver => driver.id == id)[0]["first_name"] +
+        " " +
+        state.list.filter(driver => driver.id == id)[0]["last_name"]
+      );
     } catch (e) {
       return "";
     }

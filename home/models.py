@@ -53,10 +53,10 @@ class Car(models.Model):
         ('Service', 'Service'),
     )
     FUEL = (
-        ('Petrol', 'Petrol'),
+        ('PETROL', 'Petrol'),
         ('BIO', 'BIO'),
         ('LPG', 'LPG'),
-        ('Diesel', 'Diesel'),
+        ('DIESEL', 'Diesel'),
         ('ELECTRIC', 'Electric'),
         ('HYBRID', 'Hybrid')
     )

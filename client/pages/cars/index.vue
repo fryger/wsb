@@ -24,6 +24,7 @@
           hide-default-footer
           width="100%"
           disable-pagination
+          @click:row="handleClick"
         >
           <template v-slot:[`item.status`]="{ item }">
             <v-chip :color="getColor(item.status)" dark>
@@ -46,37 +47,28 @@
       </v-layout>
     </v-row>
     <!-- Add car form -->
-    <v-navigation-drawer v-model="dialog" absolute right width="500">
-      <v-card height="100%" color="#f8f8f8">
-        <v-card-title class="justify-center text-h3 pt-10 mb-4"
-          >New vehicle</v-card-title
-        >
-
-        <v-card-action>
-          <v-btn
-            class="mx-2 btn-edit"
-            small
-            text
-            color="error"
-            @click="dialog = false"
-            ><v-icon dark>
-              mdi-close
-            </v-icon>
-          </v-btn>
-        </v-card-action>
-      </v-card>
+    <v-navigation-drawer
+      v-model="dialog"
+      absolute
+      right
+      width="500"
+      style="max-height:100vh; position: fixed;"
+    >
+      <AddCarForm />
     </v-navigation-drawer>
   </v-container>
 </template>
 
 <script>
-import UserReg from "../../components/UserReg.vue";
+//import UserReg from "../../components/UserReg.vue";
+import AddCarForm from "../../components/AddCarForm.vue";
 import Driver from "../../components/Driver.vue";
 import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
-    Driver
+    Driver,
+    AddCarForm
   },
   data() {
     return {
@@ -98,6 +90,10 @@ export default {
     };
   },
   methods: {
+    handleClick(row) {
+      console.log(row);
+      this.$router.push(`cars/${row.id}`);
+    },
     getColor(status) {
       return status == "In Use"
         ? "green"
@@ -167,11 +163,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.btn-edit {
-  position: absolute;
-  right: -8px;
-  top: 0;
-  z-index: 1;
-}
-</style>
+<style scoped></style>
