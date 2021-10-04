@@ -88,7 +88,9 @@ export default {
   },
   computed: {
     logo() {
-      return this.mini ? "logo_mini.svg" : "logo.svg";
+      return this.mini
+        ? require("../assets/logo_mini.svg")
+        : require("../assets/logo.svg");
     },
     mini() {
       switch (this.$vuetify.breakpoint.name) {
