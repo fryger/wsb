@@ -54,15 +54,14 @@
       width="500"
       style="max-height:100vh; position: fixed;"
     >
-      <AddCarForm />
+      <AddCarForm v-on:close-dialog="dialog = false" />
     </v-navigation-drawer>
   </v-container>
 </template>
 
 <script>
-//import UserReg from "../../components/UserReg.vue";
-import AddCarForm from "../../components/AddCarForm.vue";
 import Driver from "../../components/Driver.vue";
+import AddCarForm from "../../components/AddCarForm.vue";
 import { mapGetters, mapActions } from "vuex";
 
 export default {
