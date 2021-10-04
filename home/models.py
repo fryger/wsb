@@ -53,12 +53,12 @@ class Car(models.Model):
         ('Service', 'Service'),
     )
     FUEL = (
-        ('PETROL', 'Petrol'),
+        ('Petrol', 'Petrol'),
         ('BIO', 'BIO'),
         ('LPG', 'LPG'),
-        ('DIESEL', 'Diesel'),
+        ('Diesel', 'Diesel'),
         ('ELECTRIC', 'Electric'),
-        ('HYBRID', 'Hybrid')
+        ('Hybrid', 'Hybrid')
     )
 
     owner = models.ForeignKey(

@@ -2,11 +2,16 @@
   <v-app>
     <v-navigation-drawer
       app
+      dark
       permanent
+      class="rounded-tr-xl  "
       mini-variant="mini"
       :mini-variant.sync="mini"
     >
       <v-list>
+        <v-list-item link class="px-2" three-line>
+          <v-img :src="logo"></v-img>
+        </v-list-item>
         <v-list-item link class="px-2">
           <v-list-item-avatar>
             <v-img
@@ -22,7 +27,7 @@
         </v-list-item>
       </v-list>
       <v-list shaped>
-        <v-list-item-group v-model="selectedItem" color="#ff964f">
+        <v-list-item-group v-model="selectedItem">
           <v-list-item
             v-for="([icon, text, href], i) in items"
             :key="i"
@@ -42,7 +47,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-main>
+    <v-main class="ma-4">
       <Nuxt />
     </v-main>
   </v-app>
@@ -82,6 +87,9 @@ export default {
     }
   },
   computed: {
+    logo() {
+      return this.mini ? "logo_mini.svg" : "logo.svg";
+    },
     mini() {
       switch (this.$vuetify.breakpoint.name) {
         case "xs":
@@ -103,5 +111,10 @@ export default {
 <style>
 html {
   overflow-y: auto;
+}
+
+.v-list-item-group .v-list-item--active {
+  background-color: rgba(22, 218, 206, 0.7);
+  color: white;
 }
 </style>

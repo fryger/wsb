@@ -21,7 +21,10 @@ export default {
   css: ["@fortawesome/fontawesome-free/css/all.css"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [{ src: "~plugins/leaflet.js", ssr: false }],
+  plugins: [
+    { src: "~plugins/leaflet.js", ssr: false },
+    { src: "~/plugins/vee-validate.js", ssr: true }
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -29,8 +32,7 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
-    "@nuxtjs/vuetify",
-    "@braid/vue-formulate/nuxt"
+    "@nuxtjs/vuetify"
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -98,5 +100,7 @@ export default {
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {}
+  build: {
+    transpile: ["vee-validate"]
+  }
 };
