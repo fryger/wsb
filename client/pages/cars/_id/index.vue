@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col cols="12" xl="4">
-        <v-card shaped elevation="2">
+        <v-card elevation="2">
           <v-carousel
             :continuous="false"
             :cycle="cycle"
@@ -14,23 +14,24 @@
               <v-img :src="slide" contain eager></v-img>
             </v-carousel-item>
           </v-carousel>
-          <v-btn
-            class="mx-2"
-            fab
-            x-small
-            absolute
-            bottom
-            color="#ff6659"
-            style="right: 50px;"
-            ><v-icon>mdi-delete</v-icon></v-btn
-          >
-          <v-btn class="mx-2" fab x-small absolute bottom right color="#388e3c"
-            ><v-icon>mdi-plus</v-icon></v-btn
-          >
+          <v-card-text class="pa-0">
+            <v-row>
+              <v-col cols="12" xl="6" class="pb-0">
+                <v-btn text x-small tile block color="#388e3c"
+                  ><v-icon>mdi-plus</v-icon></v-btn
+                ></v-col
+              >
+              <v-col cols="12" xl="6" class="pb-0">
+                <v-btn text x-small tile block color="#ff6659"
+                  ><v-icon>mdi-delete</v-icon></v-btn
+                >
+              </v-col>
+            </v-row>
+          </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="12" xl="8">
-        <v-card shaped elevation="2" height="100%">
+        <v-card elevation="2" height="100%">
           <v-card-title class="text-h3 mb-6 font-weight-bold"
             >Car information</v-card-title
           >
@@ -102,12 +103,34 @@
           <div id="mapid" style="height: 300px"></div>
         </v-card>
       </v-col>
-      <v-col cols="12" xl="4">
-        <v-card>
-          <v-card-title>Hello</v-card-title>
+      <v-col cols="12" xl="3">
+        <v-card height="100%">
+          <v-card-subtitle>Driver history</v-card-subtitle>
+          <v-card-text>
+            <v-timeline>
+              <v-timeline-item>
+                <strong>Krzysztof Fryger</strong>
+                <div class="text-caption">
+                  24 May 2019
+                </div>
+              </v-timeline-item>
+              <v-timeline-item small
+                ><strong>Krzysztof Fryger</strong>
+                <div class="text-caption">
+                  24 May 2019
+                </div>
+              </v-timeline-item>
+              <v-timeline-item small>
+                <strong>Krzysztof Fryger</strong>
+                <div class="text-caption">
+                  24 May 2019
+                </div></v-timeline-item
+              >
+            </v-timeline>
+          </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" xl="4">
+      <v-col cols="12" xl="5">
         <v-card>
           <v-card-title>Hello</v-card-title>
         </v-card>
