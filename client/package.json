@@ -17,6 +17,7 @@
     "core-js": "^3.15.1",
     "leaflet": "^1.7.1",
     "nuxt": "^2.15.7",
+    "v-calendar": "^2.3.4",
     "vee-validate": "^3.4.13",
     "vgauge": "^1.2.12-rc3",
     "vue-svg-gauge": "^1.2.1",

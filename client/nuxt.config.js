@@ -24,7 +24,8 @@ export default {
   plugins: [
     { src: "~plugins/leaflet.js", ssr: false },
     { src: "~/plugins/vee-validate.js", ssr: true },
-    { src: "~/plugins/vue-svg-gauge.js", ssr: false }
+    { src: "~/plugins/vue-svg-gauge.js", ssr: false },
+    { src: "~/plugins/v-calendar.js", ssr: false }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
