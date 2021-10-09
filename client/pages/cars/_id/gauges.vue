@@ -3,10 +3,12 @@
     <v-row>
       <v-col cols="12" xl="6">
         <vc-date-picker
+          class="my-4"
           v-model="range"
           :model-config="modelConfig"
           is-range
           is-expanded
+          :attributes="attrs"
         />
       </v-col>
       <v-col cols="12" xl="6"> </v-col>
@@ -80,6 +82,19 @@
 export default {
   data() {
     return {
+      attrs: [
+        {
+          bar: {
+            style: {
+              backgroundColor: "brown"
+            }
+          },
+          popover: {
+            label: "Krzysztof Fryger"
+          },
+          dates: { start: new Date(2019, 0, 14), end: new Date(2019, 0, 18) }
+        }
+      ],
       labels: ["12am", "3am", "6am", "9am", "12pm", "3pm", "6pm", "9pm"],
       values: [200, 675, 410, 390, 310, 460, 250, 240],
       selectedItem: 1,
