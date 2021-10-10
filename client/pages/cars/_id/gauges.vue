@@ -14,7 +14,14 @@
       <v-col cols="12" xl="6"> </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" xl="2" v-for="(element, i) in gauge" :key="i">
+      <v-col
+        cols="12"
+        xl="2"
+        md="4"
+        sm="6"
+        v-for="(element, i) in gauge"
+        :key="i"
+      >
         <div style=" width: 90%;">
           <VueSvgGauge
             :start-angle="-110"
@@ -45,7 +52,7 @@
         <v-list
           shaped
           dense
-          style="max-height: calc(100vh - 550px)"
+          style="max-height: 40vh"
           class="mt-4 overflow-y-auto new-scroll"
         >
           <v-header>REPORTS</v-header>
@@ -119,11 +126,11 @@ export default {
       ],
       gauge: [
         { title: "Avg Speed", unit: "KM/H", value: 60, max: 300 },
+        { title: "Top Speed", unit: "KM/H", value: 212, max: 300 },
         { title: "Top RPM", unit: "RPM", value: 4777, max: 9000 },
         { title: "Avg Throtle postion", unit: "%", value: 30, max: 100 },
-        { title: "Avg Oil Temp", unit: "°", value: 90, max: 120 },
-        { title: "Avg Engine Load", unit: "%", value: 15, max: 100 },
-        { title: "Avg Coolant Temp", unit: "°", value: 80, max: 120 }
+        { title: "Top Engine Load", unit: "%", value: 15, max: 100 },
+        { title: "Avg Engine Load", unit: "%", value: 15, max: 100 }
       ],
       range: {
         start: new Date(2020, 0, 6),
