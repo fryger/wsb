@@ -11,6 +11,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 
 
+def get_file_path(instance, filename):
+    #ext = filename.split('.')[-1]
+    filename = "%s/%s/%s" % (uuid1().hex, uuid4().hex, filename)
+    return filename
+
+
 class Organization(models.Model):
     name = models.CharField(max_length=255, unique=True)
     nip = models.PositiveIntegerField(
@@ -46,11 +52,14 @@ class Car(models.Model):
         ('Convertible', 'Convertible'),
         ('Estate', 'Estate'),
         ('VAN', 'VAN'),
+        ('Coupe', 'Coupe')
     )
     STATUS = (
-        ('In Use', 'In Use'),
-        ('Out of order', 'Out of order'),
+        ('In use', 'In use'),
+        ('Free', 'Free'),
+        ('Broken', 'Broken'),
         ('Service', 'Service'),
+        ('Transport', 'Transport')
     )
     FUEL = (
         ('Petrol', 'Petrol'),
@@ -84,6 +93,11 @@ class Car(models.Model):
         return self.name
 
 
+class CarPicture(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    file = models.FileField(upload_to=get_file_path)
+
+
 class Gps(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     lat = models.FloatField()
@@ -108,12 +122,6 @@ class Maintenance(models.Model):
     description = models.CharField(max_length=2000)
     mileage = models.PositiveIntegerField(null=False)
     date = models.DateField(null=False)
-
-
-def get_file_path(instance, filename):
-    #ext = filename.split('.')[-1]
-    filename = "%s/%s/%s" % (uuid1().hex, uuid4().hex, filename)
-    return filename
 
 
 class Attachments(models.Model):

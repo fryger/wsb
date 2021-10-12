@@ -94,11 +94,15 @@ export default {
       this.$router.push(`cars/${row.id}`);
     },
     getColor(status) {
-      return status == "In Use"
-        ? "green"
-        : status == "Out of order"
+      return status == "In use"
+        ? "#89cff0"
+        : status == "Broken"
         ? "red"
-        : "blue";
+        : status == "Free"
+        ? "green"
+        : status == "Service"
+        ? "#ff6700"
+        : "#800080";
     },
     numberWithSpaces(x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");

@@ -19,8 +19,8 @@ from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .decorators import have_orgization
-from .models import Attachments, Car, Maintenance, Organization, User, Gps
-from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer
+from .models import Attachments, Car, CarPicture, Maintenance, Organization, User, Gps
+from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer
 #from .serializers import (CarSerializer, GpsSerializer, OrganizationSerializer, ProfileSerializer, UserSerializer)
 
 
@@ -194,7 +194,7 @@ class CarCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.Gen
 
 class CarDetail(mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
                 mixins.UpdateModelMixin, generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = CarSerializer
 
@@ -205,7 +205,7 @@ class CarDetail(mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
         return self.retrieve(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        if User.objects.get(id=self.request.data['driver']).organization == self.request.user.organization:
+        if Car.objects.get(id=kwargs['pk']).owner == self.request.user.organization:
             return self.update(request, *args, **kwargs)
         else:
             return HttpResponse("Wrong driver id", status=404)
@@ -275,12 +275,38 @@ class MaintenanceDetails(mixins.RetrieveModelMixin, mixins.CreateModelMixin, gen
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
+# validacja czy samochód należy do organizacji zgłaszającgo (jak w get)
+
+
+class CarPictureView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get(self, request, format=None, *args, **kwargs):
+        if Car.objects.get(id=kwargs['pk']).owner == self.request.user.organization:
+            galery = CarPicture.objects.filter(car=kwargs['pk'])
+            serializer = CarPictureSerializer(galery, many=True)
+            return Response(serializer.data)
+        else:
+            return HttpResponse("", status=404)
+
+    def post(self, request, *args, **kwargs):
+        request.data.update({'car': kwargs['pk']})
+        file_serializer = CarPictureSerializer(data=request.data)
+
+        if file_serializer.is_valid():
+            file_serializer.save()
+            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        print(kwargs, args)
+        snippet = CarPicture.objects.filter(car=kwargs['pk'], id=kwargs['pk2'])
+        snippet.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class MyFileView(APIView):
-    # MultiPartParser AND FormParser
-    # https://www.django-rest-framework.org/api-guide/parsers/#multipartparser
-    # "You will typically want to use both FormParser and MultiPartParser
-    # together in order to fully support HTML form data."
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, *args, **kwargs):
