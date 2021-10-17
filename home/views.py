@@ -300,7 +300,6 @@ class CarPictureView(APIView):
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
-        print(kwargs, args)
         snippet = CarPicture.objects.filter(car=kwargs['pk'], id=kwargs['pk2'])
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

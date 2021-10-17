@@ -26,7 +26,8 @@ SECRET_KEY = '$7)*j&8le5nkd5orxfzx292sw)^o897%r6t78mh(a5vlxr8_wi'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1',
+                 'localhost', 'gate.fryger.pl', 'de31-46-151-141-240.ngrok.io']
 
 
 # Application definition

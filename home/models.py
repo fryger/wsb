@@ -100,8 +100,26 @@ class CarPicture(models.Model):
 
 class Gps(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    lat = models.FloatField()
-    lon = models.FloatField()
+    lat = models.FloatField(null=True, blank=True,)
+    lon = models.FloatField(null=True, blank=True,)
+    alt = models.FloatField(null=True, blank=True,)
+    speed = models.FloatField(null=True, blank=True,)
+    rpm = models.IntegerField(null=True, blank=True,)
+    kph = models.FloatField(null=True, blank=True,)
+    engineload = models.IntegerField(null=True, blank=True,)
+    colanttemp = models.IntegerField(null=True, blank=True,)
+    fuelpressure = models.IntegerField(null=True, blank=True,)
+    mainfoldpressure = models.IntegerField(null=True, blank=True,)
+    intakeairtemp = models.IntegerField(null=True, blank=True,)
+    mafrate = models.IntegerField(null=True, blank=True,)
+    throttle = models.IntegerField(null=True, blank=True,)
+    runtime = models.IntegerField(null=True, blank=True,)
+    fuellevel = models.IntegerField(null=True, blank=True,)
+    absload = models.IntegerField(null=True, blank=True,)
+    oiltemp = models.IntegerField(null=True, blank=True,)
+    fuelrate = models.IntegerField(null=True, blank=True,)
+    torque = models.IntegerField(null=True, blank=True,)
+    ctrlmodvoltage = models.IntegerField(null=True, blank=True,)
     datetime = models.DateTimeField(default=datetime.now)
 
 
