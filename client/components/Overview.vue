@@ -27,7 +27,7 @@
             :cycle="cycle"
             hide-delimiter-background
             delimiter-icon="mdi-minus"
-            height="auto"
+            height="500"
           >
             <v-carousel-item v-for="slide in slides" :key="slide.id" eager>
               <v-img :src="slide.url" contain eager></v-img>
@@ -36,10 +36,16 @@
           <v-card-text class="pa-0">
             <v-row>
               <v-col cols="12" xl="6" class="pb-0">
-                <v-btn text x-small tile block color="#388e3c"
+                <v-btn
+                  text
+                  x-small
+                  tile
+                  block
+                  color="#388e3c"
+                  @click="uploadFile()"
                   ><v-icon>mdi-plus</v-icon></v-btn
-                ></v-col
-              >
+                >
+              </v-col>
               <v-col cols="12" xl="6" class="pb-0">
                 <v-btn
                   text
@@ -141,15 +147,46 @@
       <v-col>
         <v-card class="mt-12" flat>
           <v-card-title class="text-h2">Live data</v-card-title>
+          <v-card-subtitle class="ml-6"
+            >Last update :
+            {{
+              new Date(
+                Date.parse(this.$store.state.gps.list.datetime)
+              ).toUTCString()
+            }}
+          </v-card-subtitle>
         </v-card>
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" xl="3"><Chart chartTitle="Speed" /> </v-col>
-      <v-col cols="12" xl="3"><Chart chartTitle="RPM" /> </v-col>
-      <v-col cols="12" xl="3"> <Chart chartTitle="Oil temperature"/></v-col>
-      <v-col cols="12" xl="3"><Chart chartTitle="Coolant temperature"/></v-col>
+      <v-col cols="12" xl="3"
+        ><Chart
+          chartTitle="Speed"
+          :data="[this.$store.state.gps.list.speed]"
+          unit="KPH"
+        />
+      </v-col>
+      <v-col cols="12" xl="3"
+        ><Chart
+          chartTitle="RPM"
+          :data="[this.$store.state.gps.list.rpm]"
+          unit="RPM"
+        />
+      </v-col>
+      <v-col cols="12" xl="3">
+        <Chart
+          chartTitle="Oil temperature"
+          :data="[this.$store.state.gps.list.oiltemp]"
+          unit="º"
+      /></v-col>
+      <v-col cols="12" xl="3"
+        ><Chart
+          chartTitle="Coolant temperature"
+          :data="[this.$store.state.gps.list.colanttemp]"
+          unit="º"
+      /></v-col>
     </v-row>
+
     <v-row>
       <v-col cols="12">
         <v-card flat>
@@ -160,6 +197,13 @@
         </v-card>
       </v-col>
     </v-row>
+    <input
+      id="fileUpload"
+      type="file"
+      hidden
+      accept="image/*"
+      @change="handleFileUpload($event)"
+    />
   </v-container>
 </template>
 
@@ -173,10 +217,20 @@ export default {
     Chart
   },
   created() {
+    this.$store.dispatch("gps/getLatestPoint", this.$route.params.id);
     this.$store.dispatch("car/getCar", this.$route.params.id);
     this.$store.dispatch("car/getPictures", this.$route.params.id);
   },
+  beforeDestroy() {
+    clearInterval(this.intervaljob);
+  },
   computed: {
+    lat() {
+      return this.$store.state.gps.list.lat || 0.0;
+    },
+    lon() {
+      return this.$store.state.gps.list.lon || 0.0;
+    },
     slides() {
       const arr = this.$store.state.car.gallery;
       let output = [];
@@ -206,12 +260,13 @@ export default {
   },
   data() {
     return {
+      markers: [],
+      interval: null,
       carouselIndex: "",
       map: {},
       tokenIcon: "mdi-eye",
       showPassword: true,
       cycle: false,
-
       alert: false,
       alertData: {},
       value: {
@@ -299,9 +354,38 @@ export default {
     };
   },
   mounted() {
+    this.intervaljob = setInterval(() => {
+      this.$store.dispatch("gps/getLatestPoint", this.$route.params.id);
+      console.log(this.markers);
+      if (this.markers.length >= 10) {
+        console.log(this.markers);
+        this.map.removeLayer(this.markers[0]);
+        this.markers.shift();
+      } else {
+        this.markers.push(L.marker([this.lat, this.lon]).addTo(this.map));
+      }
+    }, 3000);
     this.initMap();
   },
+
   methods: {
+    uploadFile() {
+      document.getElementById("fileUpload").click();
+    },
+    async handleFileUpload(event) {
+      let formData = new FormData();
+      formData.append("file", event.target.files[0]);
+      await this.$axios
+        .post(`cars/${this.$route.params.id}/gallery`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then()
+        .catch()
+        .then();
+      this.$store.dispatch("car/getPictures", this.$route.params.id);
+    },
     removePicture() {
       this.$axios
         .delete(
@@ -311,7 +395,8 @@ export default {
         )
         .then()
         .catch()
-        .then(this.$store.dispatch("car/getPictures", this.$route.params.id));
+        .then();
+      this.$store.dispatch("car/getPictures", this.$route.params.id);
     },
     async submit() {
       const isValid = await this.$refs.carForm.validate();
@@ -356,7 +441,7 @@ export default {
       this.tokenIcon = this.showPassword ? "mdi-eye" : "mdi-eye-off";
     },
     initMap() {
-      var mymap = L.map("mapid").setView([53.570007, 10.1104954], 13);
+      this.map = L.map("mapid").setView([12, 12], 2);
       L.tileLayer(
         "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
         {
@@ -369,12 +454,7 @@ export default {
           accessToken:
             "pk.eyJ1IjoiZnJ5ZzNyIiwiYSI6ImNrdDkxNmwyZjExNWoycHBjY2JoaGRpOHEifQ.sPeP6CgU6f918oFMa2puog"
         }
-      ).addTo(mymap);
-      L.marker([53.570007, 10.1104954])
-        .bindTooltip("Last GPS signal", {
-          permanent: true
-        })
-        .addTo(mymap);
+      ).addTo(this.map);
     }
   }
 };
