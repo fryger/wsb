@@ -1,0 +1,32 @@
+<template>
+  <v-container>
+    <v-toolbar flat class="rounded-pill " height="50">
+      <v-tabs centered slider-color="#356FA4" color="#55BAB4" icons-and-text>
+        <v-tab>Overview<v-icon>fa-eye</v-icon></v-tab>
+        <v-tab :to="'gauges'">Gauges <v-icon>mdi-gauge</v-icon></v-tab>
+        <v-tab>Routes <v-icon>mdi-map-marker</v-icon></v-tab>
+        <v-tab>Drivers <v-icon>fa-users</v-icon></v-tab>
+        <v-tab>Damages <v-icon>fa-car-crash</v-icon></v-tab>
+        <v-tab>Documents <v-icon>mdi-file-document-outline</v-icon></v-tab>
+        <v-tab>Reminders <v-icon>mdi-alarm</v-icon></v-tab>
+      </v-tabs>
+    </v-toolbar>
+    <div>
+      <NuxtLink to="gauges">Home page</NuxtLink>
+    </div>
+  </v-container>
+</template>
+
+<script>
+export default {
+  data() {
+    return {};
+  }
+};
+</script>
+
+<style scoped>
+.v-tabs__item--active {
+  color: green;
+}
+</style>

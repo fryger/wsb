@@ -15,10 +15,29 @@ export default {
     },
     chartColor: {
       default: "#FF1654"
+    },
+    unit: {
+      default: "Unit"
+    },
+    data: {
+      default: [0]
+    }
+  },
+  watch: {
+    data: function(newVal, oldVal) {
+      this.arr.push(newVal[0]);
+      this.arr = this.arr.filter(item => item);
+      this.arr = this.arr.slice(-10);
+      this.$refs.chart.updateSeries([
+        {
+          data: this.arr
+        }
+      ]);
     }
   },
   data() {
     return {
+      arr: [],
       options: {
         animations: {
           enabled: true,
@@ -49,7 +68,7 @@ export default {
         },
 
         markers: {
-          size: 3
+          size: 0
         },
         colors: [this.chartColor],
         stroke: {
@@ -73,26 +92,8 @@ export default {
       },
       series: [
         {
-          name: "KM/H",
-          data: [
-            30,
-            40,
-            45,
-            50,
-            49,
-            60,
-            70,
-            91.2,
-            400,
-            123,
-            12313,
-            12313,
-            1231321,
-            123,
-            123,
-            12312333,
-            444
-          ]
+          name: this.unit,
+          data: this.arr
         }
       ]
     };

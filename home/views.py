@@ -1,4 +1,5 @@
 import re
+from django.db.models.query import QuerySet
 from django.http import HttpResponse, JsonResponse, request
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404, render
@@ -21,7 +22,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .decorators import have_orgization
 from .models import Attachments, Car, CarPicture, Maintenance, Organization, User, Gps
 from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer
-#from .serializers import (CarSerializer, GpsSerializer, OrganizationSerializer, ProfileSerializer, UserSerializer)
+# from .serializers import (CarSerializer, GpsSerializer, OrganizationSerializer, ProfileSerializer, UserSerializer)
 
 
 class UserCreation(APIView):
@@ -249,8 +250,26 @@ class GpsPointCreation(mixins.CreateModelMixin, generics.GenericAPIView):
         return self.create(request, *args, **kwargs)
 
 
+class GpsPointLatest(generics.GenericAPIView, mixins.RetrieveModelMixin):
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = GpsSerializer
+
+    def get_object(self, *args, **kwargs):
+        if self.request.user.organization_permission == '9':
+            return Gps.objects.filter(car=Car.objects.get(id=self.kwargs['pk'],
+                                                          owner=self.request.user.organization)).latest('datetime')
+        else:
+            return Gps.objects.filter(car=Car.objects.get(id=self.kwargs['pk'],
+                                                          owner=self.request.user.organization,
+                                                          driver=self.request.user)).latest('datetime')
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+
 class MaintenanceCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    #authentication_classes = [TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = MaintenanceSerializer
 
