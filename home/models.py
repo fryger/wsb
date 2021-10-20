@@ -12,7 +12,6 @@ from django.contrib.auth.models import AbstractUser
 
 
 def get_file_path(instance, filename):
-    #ext = filename.split('.')[-1]
     filename = "%s/%s/%s" % (uuid1().hex, uuid4().hex, filename)
     return filename
 
@@ -66,7 +65,7 @@ class Car(models.Model):
         ('BIO', 'BIO'),
         ('LPG', 'LPG'),
         ('Diesel', 'Diesel'),
-        ('ELECTRIC', 'Electric'),
+        ('Electric', 'Electric'),
         ('Hybrid', 'Hybrid')
     )
 
@@ -91,6 +90,16 @@ class Car(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class CarDriversHistory(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    driver = models.ForeignKey(User,  on_delete=models.CASCADE)
+    start_date = models.DateTimeField(default=datetime.now)
+    mileage = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.car.name + " - " + self.driver.username + " - " + str(self.start_date)
 
 
 class CarPicture(models.Model):

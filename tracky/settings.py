@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'django_filters',
     'corsheaders',
-    'home'
+    'home.apps.HomeConfig'
 ]
 
 MIDDLEWARE = [

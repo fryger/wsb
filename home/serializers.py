@@ -142,7 +142,6 @@ class GpsSerializer(serializers.ModelSerializer):
         read_only_fields = ['car', 'id']
 
     def create(self, validated_data):
-        print(self.context['request'].META['HTTP_CAR'])
         validated_data['car'] = Car.objects.get(
             token=self.context['request'].META['HTTP_CAR'])
         return super(GpsSerializer, self).create(validated_data)

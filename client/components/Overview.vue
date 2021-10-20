@@ -142,7 +142,6 @@
         </v-row>
       </v-col>
     </v-row>
-
     <v-row>
       <v-col>
         <v-card class="mt-12" flat>
@@ -210,6 +209,7 @@
 <script>
 import { ValidationProvider, ValidationObserver } from "vee-validate";
 import Chart from "./Chart.vue";
+import { mapGetters } from "vuex";
 export default {
   components: {
     ValidationProvider,
@@ -225,6 +225,7 @@ export default {
     clearInterval(this.intervaljob);
   },
   computed: {
+    ...mapGetters({ getDriverUsername: "driver/usernameDriver" }),
     lat() {
       return this.$store.state.gps.list.lat || 0.0;
     },
@@ -253,7 +254,7 @@ export default {
       this.value.vin = car.vin;
       this.value.year = car.year;
       this.value.engine = car.engine;
-      this.value.driver = car.driver;
+      this.value.driver = this.getDriverUsername(car.driver);
       this.value.model = car.model;
       return car;
     }
@@ -356,9 +357,7 @@ export default {
   mounted() {
     this.intervaljob = setInterval(() => {
       this.$store.dispatch("gps/getLatestPoint", this.$route.params.id);
-      console.log(this.markers);
       if (this.markers.length >= 10) {
-        console.log(this.markers);
         this.map.removeLayer(this.markers[0]);
         this.markers.shift();
       } else {
