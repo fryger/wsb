@@ -2,7 +2,7 @@ import uuid
 
 from rest_framework import fields, serializers
 from rest_framework.parsers import DataAndFiles
-from .models import Attachments, CarService, Organization, User, Car, Gps, Maintenance
+from .models import Attachments, CarService, Organization, User, Car, Gps, Maintenance, CarPicture
 from django.contrib.auth.password_validation import validate_password
 # from django.contrib.auth.models import User
 
@@ -138,7 +138,8 @@ class CarSerializer(serializers.ModelSerializer):
 class GpsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gps
-        fields = ('lat', 'lon', 'datetime')
+        fields = ('__all__')
+        read_only_fields = ['car', 'id']
 
     def create(self, validated_data):
         validated_data['car'] = Car.objects.get(
@@ -163,6 +164,12 @@ class ShopSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarService
         fields = ('name', 'street', 'street_number')
+
+
+class CarPictureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CarPicture
+        fields = ('id', 'car', 'file')
 
 
 class MyFileSerializer(serializers.ModelSerializer):

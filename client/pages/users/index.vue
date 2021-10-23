@@ -31,7 +31,7 @@
           >Register new driver</v-card-title
         >
         <UserReg v-on:close-dialog="dialog = false" url="/drivers" />
-        <v-card-action>
+        <v-card-actions>
           <v-btn
             class="mx-2 btn-edit"
             small
@@ -42,7 +42,7 @@
               mdi-close
             </v-icon>
           </v-btn>
-        </v-card-action>
+        </v-card-actions>
       </v-card>
     </v-navigation-drawer>
   </v-container>

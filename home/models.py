@@ -11,6 +11,11 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
 
 
+def get_file_path(instance, filename):
+    filename = "%s/%s/%s" % (uuid1().hex, uuid4().hex, filename)
+    return filename
+
+
 class Organization(models.Model):
     name = models.CharField(max_length=255, unique=True)
     nip = models.PositiveIntegerField(
@@ -46,18 +51,21 @@ class Car(models.Model):
         ('Convertible', 'Convertible'),
         ('Estate', 'Estate'),
         ('VAN', 'VAN'),
+        ('Coupe', 'Coupe')
     )
     STATUS = (
-        ('In Use', 'In Use'),
-        ('Out of order', 'Out of order'),
+        ('In use', 'In use'),
+        ('Free', 'Free'),
+        ('Broken', 'Broken'),
         ('Service', 'Service'),
+        ('Transport', 'Transport')
     )
     FUEL = (
         ('Petrol', 'Petrol'),
         ('BIO', 'BIO'),
         ('LPG', 'LPG'),
         ('Diesel', 'Diesel'),
-        ('ELECTRIC', 'Electric'),
+        ('Electric', 'Electric'),
         ('Hybrid', 'Hybrid')
     )
 
@@ -84,10 +92,43 @@ class Car(models.Model):
         return self.name
 
 
+class CarDriversHistory(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    driver = models.ForeignKey(User,  on_delete=models.CASCADE)
+    start_date = models.DateTimeField(default=datetime.now)
+    mileage = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.car.name + " - " + self.driver.username + " - " + str(self.start_date)
+
+
+class CarPicture(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    file = models.FileField(upload_to=get_file_path)
+
+
 class Gps(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    lat = models.FloatField()
-    lon = models.FloatField()
+    lat = models.FloatField(null=True, blank=True,)
+    lon = models.FloatField(null=True, blank=True,)
+    alt = models.FloatField(null=True, blank=True,)
+    speed = models.FloatField(null=True, blank=True,)
+    rpm = models.IntegerField(null=True, blank=True,)
+    kph = models.FloatField(null=True, blank=True,)
+    engineload = models.IntegerField(null=True, blank=True,)
+    colanttemp = models.IntegerField(null=True, blank=True,)
+    fuelpressure = models.IntegerField(null=True, blank=True,)
+    mainfoldpressure = models.IntegerField(null=True, blank=True,)
+    intakeairtemp = models.IntegerField(null=True, blank=True,)
+    mafrate = models.IntegerField(null=True, blank=True,)
+    throttle = models.IntegerField(null=True, blank=True,)
+    runtime = models.IntegerField(null=True, blank=True,)
+    fuellevel = models.IntegerField(null=True, blank=True,)
+    absload = models.IntegerField(null=True, blank=True,)
+    oiltemp = models.IntegerField(null=True, blank=True,)
+    fuelrate = models.IntegerField(null=True, blank=True,)
+    torque = models.IntegerField(null=True, blank=True,)
+    ctrlmodvoltage = models.IntegerField(null=True, blank=True,)
     datetime = models.DateTimeField(default=datetime.now)
 
 
@@ -108,12 +149,6 @@ class Maintenance(models.Model):
     description = models.CharField(max_length=2000)
     mileage = models.PositiveIntegerField(null=False)
     date = models.DateField(null=False)
-
-
-def get_file_path(instance, filename):
-    #ext = filename.split('.')[-1]
-    filename = "%s/%s/%s" % (uuid1().hex, uuid4().hex, filename)
-    return filename
 
 
 class Attachments(models.Model):

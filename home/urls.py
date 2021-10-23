@@ -1,7 +1,7 @@
 from home.models import User
 from django.urls import path, re_path, include
 #from .views import NewProfileCollection, UserCreation, CarCollection, CarDetails, GpsCollection, NewCarCollection, NewOrganizationCollection
-from .views import UserCreation, OrganizationCollection, UserDetail, DriverCollection, DriverDetail, UpdateDriverPassword, CarCollection, CarDetail, GpsCollection, GpsPointCreation, MaintenanceCollection, MaintenanceDetails, MyFileView, OrganizationCreationView
+from .views import UserCreation, GpsPointLatest, OrganizationCollection, UserDetail, DriverCollection, DriverDetail, UpdateDriverPassword, CarCollection, CarDetail, GpsCollection, GpsPointCreation, MaintenanceCollection, MaintenanceDetails, MyFileView, OrganizationCreationView, CarPictureView
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_simplejwt import views as jwt_views
@@ -20,10 +20,15 @@ urlpatterns = [
     path('drivers/<int:pk>/', DriverDetail.as_view()),
     path('drivers/<int:pk>/changepassword', UpdateDriverPassword.as_view()),
     path('cars', CarCollection.as_view()),
+
+    path('cars/gallery/<int:pk>', CarPictureView.as_view()),
     path('cars/location', GpsPointCreation.as_view()),
+    path('cars/<int:pk>/gallery', CarPictureView.as_view()),
+    path('cars/<int:pk>/gallery/<int:pk2>', CarPictureView.as_view()),
     path('cars/<int:pk>/maintenance', MaintenanceCollection.as_view()),
     path('cars/<int:pk>/maintenance/<int:pk2>', MaintenanceDetails.as_view()),
     path('cars/<int:pk>/', CarDetail.as_view()),
     path('cars/<int:pk>/gps', GpsCollection.as_view()),
+    path('cars/<int:pk>/gps/latest', GpsPointLatest.as_view()),
     path('upload', MyFileView.as_view())
 ]

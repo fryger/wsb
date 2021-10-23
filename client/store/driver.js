@@ -37,5 +37,12 @@ export const getters = {
     } catch (e) {
       return "";
     }
+  },
+  usernameDriver: state => id => {
+    try {
+      return state.list.filter(driver => driver.id == id)[0]["username"];
+    } catch (e) {
+      return "";
+    }
   }
 };

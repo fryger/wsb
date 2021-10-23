@@ -152,7 +152,7 @@ export default {
         {
           label: "Engine",
           model: "engine",
-          rule: "required|numeric|max_value:50"
+          rule: "required|max_value:50"
         },
         { label: "Mileage", model: "mileage", rule: "required|numeric" },
         { label: "VIN", model: "vin", rule: "required|alpha_num" }
@@ -168,7 +168,8 @@ export default {
             "Sedan",
             "Convertible",
             "Estate",
-            "VAN"
+            "VAN",
+            "Coupe"
           ],
           model: "bodyType",
           rule: "required"
@@ -183,7 +184,7 @@ export default {
         {
           label: "Status",
           ico: "mdi-heart-pulse",
-          type: ["In Use", "Out of order", "Service"],
+          type: ["In use", "Free", "Broken", "Service", "Transport"],
           model: "status",
           rule: "required"
         },

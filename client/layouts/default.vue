@@ -9,7 +9,7 @@
       :mini-variant.sync="mini"
     >
       <v-list>
-        <v-list-item link class="px-2" three-line>
+        <v-list-item link class="px-2" two-line>
           <v-img :src="logo"></v-img>
         </v-list-item>
         <v-list-item link class="px-2">
@@ -88,7 +88,9 @@ export default {
   },
   computed: {
     logo() {
-      return this.mini ? "logo_mini.svg" : "logo.svg";
+      return this.mini
+        ? require("../assets/logo_mini.svg")
+        : require("../assets/logo.svg");
     },
     mini() {
       switch (this.$vuetify.breakpoint.name) {
@@ -116,5 +118,14 @@ html {
 .v-list-item-group .v-list-item--active {
   background-color: rgba(22, 218, 206, 0.7);
   color: white;
+}
+
+.home-enter-active,
+.home-leave-active {
+  transition: opacity 0.3s;
+}
+.home-enter,
+.home-leave-active {
+  opacity: 0;
 }
 </style>
