@@ -1,4 +1,5 @@
-import re
+from datetime import date, datetime
+import dateutil.parser
 from django.db.models.query import QuerySet
 from django.http import HttpResponse, JsonResponse, request
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -22,7 +23,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .decorators import have_orgization
 from .models import Attachments, Car, CarPicture, Maintenance, Organization, User, Gps
 from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer
-# from .serializers import (CarSerializer, GpsSerializer, OrganizationSerializer, ProfileSerializer, UserSerializer)
 
 
 class UserCreation(APIView):
@@ -217,7 +217,7 @@ class CarDetail(mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
 
 class GpsCollection(mixins.ListModelMixin, generics.GenericAPIView):
 
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = GpsSerializer
 
@@ -226,13 +226,26 @@ class GpsCollection(mixins.ListModelMixin, generics.GenericAPIView):
     search_fields = ['datetime']
 
     def get_queryset(self):
+        queryset = None
+
+        start_date = self.request.query_params.get('from')
+        end_date = self.request.query_params.get('to')
+
         if self.request.user.organization_permission == '9':
-            return Gps.objects.filter(car=Car.objects.get(id=self.kwargs['pk'],
-                                                          owner=self.request.user.organization))
+            queryset = Gps.objects.filter(car=Car.objects.get(id=self.kwargs['pk'],
+                                                              owner=self.request.user.organization))
         else:
-            return Gps.objects.filter(car=Car.objects.get(id=self.kwargs['pk'],
-                                                          owner=self.request.user.organization,
-                                                          driver=self.request.user))
+            queryset = Gps.objects.filter(car=Car.objects.get(id=self.kwargs['pk'],
+                                                              owner=self.request.user.organization,
+                                                              driver=self.request.user))
+
+        if (start_date is not None) and (start_date != ""):
+            queryset = queryset.filter(datetime__gte=start_date)
+
+        if (end_date is not None) and (end_date != ""):
+            queryset = queryset.filter(datetime__lte=end_date)
+
+        return queryset
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

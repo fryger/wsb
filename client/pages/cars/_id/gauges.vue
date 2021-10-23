@@ -28,7 +28,7 @@
             :end-angle="110"
             :value="element.value"
             :max="element.max"
-            separatorThickness="5"
+            :separatorThickness="5"
             :separator-step="0"
             :scale-interval="element.max / 10"
             :inner-radius="80"
@@ -55,7 +55,7 @@
           style="max-height: 40vh"
           class="mt-4 overflow-y-auto new-scroll"
         >
-          <v-header>REPORTS</v-header>
+          <v-list-item-title>REPORTS</v-list-item-title>
           <v-list-item-group v-model="selectedItem" color="primary">
             <v-list-item v-for="(item, i) in items" :key="i">
               <v-list-item-content>
@@ -133,8 +133,8 @@ export default {
         { title: "Avg Engine Load", unit: "%", value: 15, max: 100 }
       ],
       range: {
-        start: new Date(2020, 0, 6),
-        end: new Date(2020, 0, 9)
+        start: new Date(2021, 10, 1),
+        end: new Date(2021, 10, 1)
       },
       modelConfig: {
         start: {
@@ -145,6 +145,15 @@ export default {
         }
       }
     };
+  },
+  watch: {
+    range: function(val) {
+      this.$store.dispatch("gps/getPointsRange", {
+        id: this.$route.params.id,
+        from: new Date(val.start).toISOString(),
+        to: new Date(val.end).toISOString()
+      });
+    }
   }
 };
 </script>
