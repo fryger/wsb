@@ -111,6 +111,17 @@ export default {
 </script>
 
 <style>
+.apexcharts-zoom-icon svg,
+.apexcharts-zoomin-icon svg,
+.apexcharts-zoomout-icon svg,
+.apexcharts-reset-icon svg,
+.apexcharts-pan-icon svg,
+.apexcharts-selection-icon svg,
+.apexcharts-menu-icon svg,
+.apexcharts-toolbar-custom-icon svg {
+  fill: black !important;
+}
+
 html {
   overflow-y: auto;
 }

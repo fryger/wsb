@@ -11,7 +11,9 @@
           :attributes="attrs"
         />
       </v-col>
-      <v-col cols="12" xl="6"> </v-col>
+      <v-col cols="12" xl="6">
+        <Driver />
+      </v-col>
     </v-row>
     <v-row>
       <v-col
@@ -47,6 +49,7 @@
         </div>
       </v-col>
     </v-row>
+
     <v-row>
       <v-col cols="12" xl="4">
         <v-list
@@ -56,8 +59,12 @@
           class="mt-4 overflow-y-auto new-scroll"
         >
           <v-list-item-title>REPORTS</v-list-item-title>
-          <v-list-item-group v-model="selectedItem" color="primary">
-            <v-list-item v-for="(item, i) in items" :key="i">
+          <v-list-item-group v-model="selectedItem" color="primary" multiple>
+            <v-list-item
+              v-for="(item, i) in items"
+              :key="i"
+              :value="item.value"
+            >
               <v-list-item-content>
                 <v-list-item-title v-text="item.text"></v-list-item-title>
               </v-list-item-content>
@@ -71,24 +78,117 @@
           color="#52B2AB"
           elevation="4"
         >
-          <v-sparkline
-            height="100"
-            :labels="labels"
-            :value="values"
-            color="white"
-            line-width="2"
-            padding="16"
-          ></v-sparkline>
+          <apexchart
+            height="380px"
+            ref="chart"
+            type="line"
+            :options="options"
+            :series="values"
+          ></apexchart>
         </v-sheet>
       </v-col>
     </v-row>
+    <div style="display: none">
+      {{ speed }}, {{ rpm }}, {{ throttle }} {{ engineload }}
+    </div>
   </v-container>
 </template>
 
 <script>
+import Driver from "../../../components/Driver.vue";
+import { mapState } from "vuex";
 export default {
+  created() {
+    this.$store.dispatch("gps/getPointsRange", {
+      id: this.$route.params.id,
+      from: new Date().toISOString(),
+      to: new Date().toISOString()
+    });
+  },
+  computed: {
+    ...mapState({
+      gps: state => state.gps.points
+    }),
+    speed() {
+      let result = this.gps.map(i => i.kph);
+      return (
+        (this.gauge[0].value =
+          parseInt(result.reduce((a, b) => a + b, 0) / result.length) || 0),
+        (this.gauge[1].value = Math.max(...result, 0) || 0)
+      );
+    },
+    rpm() {
+      let result = this.gps.map(i => i.rpm);
+      return (this.gauge[2].value = Math.max(...result, 0) || 0);
+    },
+    throttle() {
+      let result = this.gps.map(i => i.throttle);
+      return (this.gauge[3].value =
+        parseInt(result.reduce((a, b) => a + b, 0) / result.length) || 0);
+    },
+    engineload() {
+      let result = this.gps.map(i => i.engineload);
+      return (
+        (this.gauge[4].value = Math.max(...result, 0) || 0),
+        (this.gauge[5].value =
+          parseInt(result.reduce((a, b) => a + b, 0) / result.length) || 0)
+      );
+    }
+  },
   data() {
     return {
+      options: {
+        chart: {
+          background: "#52B2AB",
+
+          type: "line",
+          zoom: {
+            enabled: true
+          }
+        },
+
+        grid: {
+          show: false
+        },
+        colors: [
+          "#FFFFFF",
+          "#F44336",
+          "#E91E63",
+          "#9C27B0",
+          "#ebc83d",
+          "#badf55",
+          "#3D5B59",
+          "#b06dad",
+          "#e96060",
+          "#FFAEBC",
+          "#A0E7E5",
+          "#B4F8C8",
+          "#FBE7C6",
+          "#B99095"
+        ],
+        xaxis: {
+          labels: {
+            show: false
+          },
+          axisTicks: {
+            show: false
+          },
+          tooltip: {
+            enabled: false
+          },
+          axisBorder: {
+            show: false
+          }
+        },
+        yaxis: {
+          show: false
+        },
+        export: {
+          csv: {
+            headerCategory: "Date"
+          }
+        }
+      },
       attrs: [
         {
           bar: {
@@ -99,42 +199,12 @@ export default {
           popover: {
             label: "Krzysztof Fryger"
           },
-          dates: { start: new Date(2019, 0, 14), end: new Date(2019, 0, 18) }
+          dates: { start: new Date(), end: new Date() }
         }
       ],
-      labels: ["12am", "3am", "6am", "9am", "12pm", "3pm", "6pm", "9pm"],
-      values: [200, 675, 410, 390, 310, 460, 250, 240],
-      selectedItem: 1,
-      items: [
-        { text: "Engine Load" },
-        { text: "Coolant Temp" },
-        { text: "Fuel Pressure" },
-        { text: "Mainfold Pressure" },
-        { text: "RPM" },
-        { text: "Speed" },
-        { text: "Timing Advance" },
-        { text: "MAF Rate" },
-        { text: "Intake Air Temp" },
-        { text: "Throttle" },
-        { text: "Fuel Level" },
-        { text: "EVAP Pressure" },
-        { text: "ABS Load" },
-        { text: "Oil Temp" },
-        { text: "Fuel Rate" },
-        { text: "Fuel Inject Timing" },
-        { text: "Ambient Temp" }
-      ],
-      gauge: [
-        { title: "Avg Speed", unit: "KM/H", value: 60, max: 300 },
-        { title: "Top Speed", unit: "KM/H", value: 212, max: 300 },
-        { title: "Top RPM", unit: "RPM", value: 4777, max: 9000 },
-        { title: "Avg Throtle postion", unit: "%", value: 30, max: 100 },
-        { title: "Top Engine Load", unit: "%", value: 15, max: 100 },
-        { title: "Avg Engine Load", unit: "%", value: 15, max: 100 }
-      ],
       range: {
-        start: new Date(2021, 10, 1),
-        end: new Date(2021, 10, 1)
+        start: new Date(),
+        end: new Date()
       },
       modelConfig: {
         start: {
@@ -143,16 +213,85 @@ export default {
         end: {
           timeAdjust: "23:59:59"
         }
-      }
+      },
+      gauge: [
+        { title: "Avg Speed", unit: "KM/H", value: 0, max: 300 },
+        { title: "Top Speed", unit: "KM/H", value: 0, max: 300 },
+        { title: "Top RPM", unit: "RPM", value: 0, max: 9000 },
+        { title: "Avg Throtle postion", unit: "%", value: 0, max: 100 },
+        { title: "Top Engine Load", unit: "%", value: 0, max: 100 },
+        { title: "Avg Engine Load", unit: "%", value: 0, max: 100 }
+      ],
+      values: [{ data: [0, 0] }],
+      selectedItem: 3,
+      items: [
+        {
+          text: "Engine Load",
+          value: { name: "engineload", unit: "Engine Load - %" }
+        },
+        {
+          text: "Coolant Temp",
+          value: { name: "colanttemp", unit: "Coolant Temp - °" }
+        },
+        {
+          text: "Fuel Pressure",
+          value: { name: "fuelpressure", unit: "Fuel Pressure - BAR" }
+        },
+        {
+          text: "Mainfold Pressure",
+          value: { name: "mainfoldpressure", unit: "Mainfold Pressure - BAR" }
+        },
+        { text: "RPM", value: { name: "rpm", unit: "RPM" } },
+        { text: "Speed", value: { name: "kph", unit: "Speed - KM/H" } },
+        // { text: "Timing Advance", value: { name: "", unit: "" } },
+        {
+          text: "MAF Rate",
+          value: { name: "mafrate", unit: "MAF Rate - G/S" }
+        },
+        {
+          text: "Intake Air Temp",
+          value: { name: "intakeairtemp", unit: "Intake Air Temp - °" }
+        },
+        { text: "Throttle", value: { name: "throttle", unit: "Throttle - %" } },
+        {
+          text: "Fuel Level",
+          value: { name: "fuellevel", unit: "Fuel Level - %" }
+        },
+        // { text: "EVAP Pressure", value: { name: "", unit: "" } },
+        { text: "ABS Load", value: { name: "absload", unit: "ABS Load - %" } },
+        { text: "Oil Temp", value: { name: "oiltemp", unit: "Oil Temp - °" } },
+        { text: "Fuel Rate", value: { name: "fuelrate", unit: "Fuel Rate" } }
+        // { text: "Fuel Inject Timing", value: { name: "", unit: "" } },
+        //{ text: "Ambient Temp", value: { name: "", unit: "" } }
+      ]
     };
   },
   watch: {
-    range: function(val) {
+    selectedItem: function(v) {
+      let values = [];
+
+      v.forEach(e => {
+        let result = this.gps.map(i => ({
+          x: new Date(Date.parse(i["datetime"])).toUTCString(),
+          y: i[e.name]
+        }));
+
+        values.push({
+          name: e.unit,
+          data: result.length == 0 ? [0, 0] : result
+        });
+      });
+
+      this.values = values;
+    },
+
+    range: function(v) {
       this.$store.dispatch("gps/getPointsRange", {
         id: this.$route.params.id,
-        from: new Date(val.start).toISOString(),
-        to: new Date(val.end).toISOString()
+        from: new Date(v.start).toISOString(),
+        to: new Date(v.end).toISOString()
       });
+      this.selectedItem = [];
     }
   }
 };
