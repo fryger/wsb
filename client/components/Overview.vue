@@ -432,7 +432,7 @@ export default {
               setTimeout(() => (this.alert = false), 5000);
             }
           })
-          .then(this.$store.dispatch("car/getCar", this.$route.params.id));
+          .then();
       }
     },
     showToken() {

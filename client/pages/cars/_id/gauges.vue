@@ -223,7 +223,7 @@ export default {
         { title: "Avg Engine Load", unit: "%", value: 0, max: 100 }
       ],
       values: [{ data: [0, 0] }],
-      selectedItem: 3,
+      selectedItem: [3],
       items: [
         {
           text: "Engine Load",

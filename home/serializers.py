@@ -2,7 +2,7 @@ import uuid
 
 from rest_framework import fields, serializers
 from rest_framework.parsers import DataAndFiles
-from .models import Attachments, CarService, Organization, User, Car, Gps, Maintenance, CarPicture
+from .models import Attachments, CarService, Organization, User, Car, Gps, Maintenance, CarPicture, CarDriversHistory
 from django.contrib.auth.password_validation import validate_password
 # from django.contrib.auth.models import User
 
@@ -117,6 +117,13 @@ class DriverPasswordSerializer(serializers.ModelSerializer):
         instance.set_password(password)
         instance.save()
         return instance
+
+
+class CarDriversHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CarDriversHistory
+        fields = ['driver', 'start_date', 'end_date',
+                  'start_mileage', 'end_mileage']
 
 
 class CarSerializer(serializers.ModelSerializer):

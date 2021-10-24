@@ -96,7 +96,9 @@ class CarDriversHistory(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     driver = models.ForeignKey(User,  on_delete=models.CASCADE)
     start_date = models.DateTimeField(default=datetime.now)
-    mileage = models.PositiveIntegerField()
+    end_date = models.DateTimeField(null=True, blank=True)
+    start_mileage = models.PositiveIntegerField()
+    end_mileage = models.PositiveIntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.car.name + " - " + self.driver.username + " - " + str(self.start_date)

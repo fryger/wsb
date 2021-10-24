@@ -21,8 +21,8 @@ from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .decorators import have_orgization
-from .models import Attachments, Car, CarPicture, Maintenance, Organization, User, Gps
-from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer
+from .models import Attachments, Car, CarPicture, Maintenance, Organization, User, Gps, CarDriversHistory
+from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer, CarDriversHistorySerializer
 
 
 class UserCreation(APIView):
@@ -213,6 +213,25 @@ class CarDetail(mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+
+class CarDriverHistoryCollection(mixins.ListModelMixin, generics.GenericAPIView):
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = CarDriversHistorySerializer
+
+    def get_queryset(self):
+        if self.request.user.organization_permission == '9':
+            queryset = CarDriversHistory.objects.filter(car=Car.objects.get(id=self.kwargs['pk'],
+                                                                            owner=self.request.user.organization))
+        else:
+            queryset = CarDriversHistory.objects.filter(car=Car.objects.get(id=self.kwargs['pk'],
+                                                                            owner=self.request.user.organization,
+                                                                            driver=self.request.user))
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 
 class GpsCollection(mixins.ListModelMixin, generics.GenericAPIView):
