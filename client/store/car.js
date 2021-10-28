@@ -1,6 +1,7 @@
 export const state = () => ({
   list: [],
-  gallery: []
+  gallery: [],
+  history: []
 });
 
 export const mutations = {
@@ -9,6 +10,9 @@ export const mutations = {
   },
   SET_GALLERY(state, payload) {
     state.gallery = payload;
+  },
+  SET_HISTORY(state, payload) {
+    state.history = payload.reverse();
   }
 };
 
@@ -22,18 +26,19 @@ export const actions = {
     await this.$axios
       .get(`cars/${id}/gallery`)
       .then(response => commit("SET_GALLERY", response.data));
+  },
+  async getHistory({ commit }, id) {
+    await this.$axios
+      .get(`cars/${id}/history`)
+      .then(response => commit("SET_HISTORY", response.data));
   }
 };
-/*
-  export const getters = {
-    searchDriver: state => f => {
-      return state.list.filter(
-        r =>
-          r.email.toLowerCase().includes(f) ||
-          r.username.toLowerCase().includes(f) ||
-          r.first_name.toLowerCase().includes(f) ||
-          r.last_name.toLowerCase().includes(f)
-      );
-    }
-  };
-  */
+
+export const getters = {
+  uniqueHistory: state => {
+    return state.history.filter(
+      (item, index, self) =>
+        index === self.findIndex(t => t.driver.id === item.driver.id)
+    );
+  }
+};

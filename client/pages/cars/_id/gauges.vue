@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="12" xl="6">
+    <v-row align="center" justify="center">
+      <v-col cols="12">
         <vc-date-picker
           class="my-4"
           v-model="range"
@@ -9,10 +9,8 @@
           is-range
           is-expanded
           :attributes="attrs"
-        />
-      </v-col>
-      <v-col cols="12" xl="6">
-        <Driver />
+        >
+        </vc-date-picker>
       </v-col>
     </v-row>
     <v-row>
@@ -96,7 +94,7 @@
 
 <script>
 import Driver from "../../../components/Driver.vue";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 export default {
   created() {
     this.$store.dispatch("gps/getPointsRange", {
@@ -104,10 +102,15 @@ export default {
       from: new Date().toISOString(),
       to: new Date().toISOString()
     });
+    this.$store.dispatch("car/getHistory", this.$route.params.id);
   },
   computed: {
     ...mapState({
       gps: state => state.gps.points
+      //driverhistory: state => state.car.history
+    }),
+    ...mapGetters({
+      driverhistory: "car/uniqueHistory"
     }),
     speed() {
       let result = this.gps.map(i => i.kph);
@@ -133,6 +136,32 @@ export default {
         (this.gauge[5].value =
           parseInt(result.reduce((a, b) => a + b, 0) / result.length) || 0)
       );
+    },
+    attrs() {
+      let result = [];
+      let req = this.driverhistory;
+      console.log(req);
+      req.forEach(e => {
+        result.push({
+          bar: {
+            style: {
+              backgroundColor:
+                "#" +
+                ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, "0")
+            }
+          },
+          popover: {
+            color: "red",
+            label: e.driver.first_name + " " + e.driver.last_name
+          },
+          dates: {
+            start: new Date(e.start_date),
+            end: new Date(e.end_date || new Date())
+          }
+        });
+      });
+
+      return result;
     }
   },
   data() {
@@ -189,19 +218,7 @@ export default {
           }
         }
       },
-      attrs: [
-        {
-          bar: {
-            style: {
-              backgroundColor: "brown"
-            }
-          },
-          popover: {
-            label: "Krzysztof Fryger"
-          },
-          dates: { start: new Date(), end: new Date() }
-        }
-      ],
+
       range: {
         start: new Date(),
         end: new Date()

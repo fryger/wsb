@@ -120,6 +120,8 @@ class DriverPasswordSerializer(serializers.ModelSerializer):
 
 
 class CarDriversHistorySerializer(serializers.ModelSerializer):
+    driver = DriverSerializer()
+
     class Meta:
         model = CarDriversHistory
         fields = ['driver', 'start_date', 'end_date',

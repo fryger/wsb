@@ -24,3 +24,7 @@ export const actions = {
       .then(response => commit("SET_POINTS", response.data));
   }
 };
+
+export const getters = {
+  filterPoints: state => f => {}
+};

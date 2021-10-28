@@ -17,9 +17,7 @@
         <v-tab :to="`/cars/${$route.params.id}/routes`"
           >Routes <v-icon>mdi-map-marker</v-icon></v-tab
         >
-        <v-tab :to="`/cars/${$route.params.id}/drivers`"
-          >Drivers <v-icon>fa-users</v-icon></v-tab
-        >
+
         <v-tab :to="`/cars/${$route.params.id}/damages`"
           >Damages <v-icon>fa-car-crash</v-icon></v-tab
         >
