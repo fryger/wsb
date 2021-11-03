@@ -27,7 +27,7 @@ SECRET_KEY = '$7)*j&8le5nkd5orxfzx292sw)^o897%r6t78mh(a5vlxr8_wi'
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1',
-                 'localhost', 'gate.fryger.pl', 'withered-field-19965.pktriot.net']
+                 'localhost', 'gate.fryger.pl', 'withered-field-19965.pktriot.net', '1fdf-46-151-141-242.ngrok.io']
 
 
 # Application definition
