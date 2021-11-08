@@ -55,6 +55,7 @@
 
 <script>
 export default {
+  middleware: "authwatcher",
   data: () => ({
     selectedItem: "",
     username: "",

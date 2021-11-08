@@ -90,7 +90,6 @@ export default {
   },
   methods: {
     handleClick(row) {
-      console.log(row);
       this.$router.push(`cars/${row.id}`);
     },
     getColor(status) {
