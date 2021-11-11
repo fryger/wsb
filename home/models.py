@@ -143,6 +143,36 @@ class CarService(models.Model):
         return self.name
 
 
+class CarDamages(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    date = models.DateTimeField()
+    place = models.CharField(max_length=255)
+    guilty = models.CharField(max_length=255)
+    repaired = models.CharField(max_length=255)
+    shop = models.ForeignKey(CarService, on_delete=models.PROTECT)
+    insurance = models.CharField(max_length=255)
+    damages = models.CharField(max_length=500)
+    description = models.CharField(max_length=500)
+
+    def __str__(self):
+        return self.title
+
+
+class CarDamagesAttachment(models.Model):
+    case = models.ForeignKey(CarDamages, on_delete=CASCADE)
+    name = models.CharField(max_length=255)
+    file = models.FileField(upload_to=get_file_path)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+
+class CarDocuments(models.Model):
+    car = models.ForeignKey(Car, on_delete=CASCADE)
+    name = models.CharField(max_length=255)
+    file = models.FileField(upload_to=get_file_path)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+
 class Maintenance(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     driver = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -159,45 +189,11 @@ class Attachments(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
 
-'''
-class User(AbstractUser):
-    pass
-
-
-
-class OrgSettings(models.Model):
-    PERMISSION = (
-        ('0','User'),
-        ('9','Admin')
-    )
-
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, default=1)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    permission = models.CharField(choices=PERMISSION, default=0, max_length=1)
-    
-    def __str__(self) -> str:
-        return ('Permissions ' + self.user.username)
-
-class Car(models.Model):
-    owner = models.ForeignKey(
-        Organization, related_name='cars', on_delete=models.CASCADE)
-    driver = models.OneToOneField(
-        User, null=True, blank=True, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    manufacturer = models.CharField(max_length=255)
-    model = models.CharField(max_length=255)
-    mileage = models.PositiveIntegerField()
-    vin = models.CharField(max_length=17)
-
-    def __str__(self):
-        return self.name
-
-
-class Gps(models.Model):
+class Reminders(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    lat = models.FloatField()
-    lon = models.FloatField()
-    datetime = models.DateTimeField(default=datetime.now)
-
-
-'''
+    title = models.CharField(max_length=255)
+    description = models.CharField(max_length=2000)
+    when = models.DateTimeField(auto_now_add=True)
+    sms = models.BooleanField(default=False)
+    email = models.BooleanField(default=False)
+    repetetive = models.BooleanField(default=False)

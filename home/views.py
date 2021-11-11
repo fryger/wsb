@@ -21,8 +21,8 @@ from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .decorators import have_orgization
-from .models import Attachments, Car, CarPicture, Maintenance, Organization, User, Gps, CarDriversHistory
-from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer, CarDriversHistorySerializer
+from .models import Attachments, Car, CarPicture, Maintenance, Organization, User, Gps, CarDriversHistory, CarDamages, CarDamagesAttachment
+from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer, CarDriversHistorySerializer, CarDamagesSerializer
 
 
 class UserCreation(APIView):
@@ -326,7 +326,23 @@ class MaintenanceDetails(mixins.RetrieveModelMixin, mixins.CreateModelMixin, gen
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
 
+
 # validacja czy samochód należy do organizacji zgłaszającgo (jak w get)
+
+
+class CarDamagesCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = CarDamagesSerializer
+
+    def get_queryset(self):
+        return CarDamages.objects.filter(car=Car.objects.get(id=self.kwargs['pk']))
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class CarPictureView(APIView):

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row justify="center">
       <v-col cols="12" lg="4" md="7" sm="12">
         <div class="text-h4">Add new reminder</div>
         <v-text-field label="Name"></v-text-field>
@@ -59,7 +59,7 @@
       </v-col>
       <v-col cols="12" lg="8" md="5" sm="12" class="pa-12">
         <v-row>
-          <v-card class="ma-2" width="300">
+          <v-card class="ma-2" width="300" v-for="index in 7" :key="index">
             <v-btn
               depressed
               text

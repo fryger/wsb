@@ -5,35 +5,30 @@
         <v-expansion-panel class="mt-2" v-for="(item, i) in 50" :key="i">
           <v-expansion-panel-header>
             <template v-slot:default="{ open }">
-              <v-row no-gutters>
-                <v-col cols="1">
-                  <span class="font-weight-bold text-subtitle-1">
-                    {{ title }}</span
-                  >
-                  <v-divider></v-divider>
-                </v-col>
-                <v-col cols="2" class="text--secondary">
-                  <v-fade-transition leave-absolute>
-                    <span v-if="open" key="0"> </span>
-                    <span v-else key="1">
-                      <v-icon>mdi-earth</v-icon> {{ street }}, {{ city }}
-                    </span>
-                  </v-fade-transition>
-                </v-col>
-                <v-col cols="2" class="text--secondary">
-                  <v-fade-transition leave-absolute>
-                    <span v-if="open" key="0"> </span>
-                    <span v-else key="1">
-                      <v-icon>mdi-calendar</v-icon>{{ date }}
-                    </span>
-                  </v-fade-transition>
-                </v-col>
+              <v-row>
+                <span class="font-weight-bold text-subtitle-1 mx-4">
+                  {{ title }}</span
+                >
+
+                <v-fade-transition leave-absolute>
+                  <span v-if="open" key="0"> </span>
+                  <span class="mx-4" v-else key="1">
+                    <v-icon>mdi-earth</v-icon> {{ street }}, {{ city }}
+                  </span>
+                </v-fade-transition>
+
+                <v-fade-transition leave-absolute>
+                  <span v-if="open" key="0"> </span>
+                  <span class="mx-4" v-else key="1">
+                    <v-icon>mdi-calendar</v-icon>{{ date }}
+                  </span>
+                </v-fade-transition>
               </v-row>
             </template>
           </v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-row>
-              <v-col cols="8">
+              <v-col cols="12" lg="8" xs="12">
                 <v-card elevation="12" class="mx-auto">
                   <v-carousel v-model="model">
                     <v-carousel-item src="https://i.imgur.com/iJG7nFY.jpg">
@@ -44,7 +39,7 @@
                   </v-carousel>
                 </v-card>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="12" lg="4" xs="12">
                 <v-card elevation="6" class="mx-auto" style="height:100%">
                   <v-card-text class="text-subtitle-1 font-weight-medium">
                     <p>

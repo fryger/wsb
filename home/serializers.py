@@ -2,7 +2,7 @@ import uuid
 
 from rest_framework import fields, serializers
 from rest_framework.parsers import DataAndFiles
-from .models import Attachments, CarService, Organization, User, Car, Gps, Maintenance, CarPicture, CarDriversHistory
+from .models import Attachments, CarDamages, CarDamagesAttachment, CarService, Organization, User, Car, Gps, Maintenance, CarPicture, CarDriversHistory
 from django.contrib.auth.password_validation import validate_password
 # from django.contrib.auth.models import User
 
@@ -186,6 +186,38 @@ class MyFileSerializer(serializers.ModelSerializer):
         model = Attachments
         fields = ('file', 'uploaded_at', 'case')
         extra_kwargs = {'case': {'write_only': True}}
+
+
+class CarDamagesFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CarDamagesAttachment
+        fields = ('file', 'uploaded_at', 'name')
+        extra_kwargs = {'case': {'write_only': True}}
+
+
+class CarDamagesSerializer(serializers.HyperlinkedModelSerializer):
+    shop = ShopSerializer(read_only=True)
+    attachments = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CarDamages
+        fields = ('title', 'date', 'place', 'guilty', 'repaired',
+                  'shop', 'insurance', 'damages', 'description', 'attachments')
+        depth = 1
+
+    def get_attachments(self, obj):
+        attachments = obj.cardamagesattachment_set.all()
+        response = CarDamagesFileSerializer(attachments, many=True).data
+        return response
+
+    def create(self, validated_data):
+        shop = CarService.objects.get(
+            id=self.context.get('request')._data['shop'])
+        car = Car.objects.get(id=self.context.get(
+            'request').parser_context.get('kwargs').get('pk'))
+        validated_data['car'] = car
+        validated_data['shop'] = shop
+        return super().create(validated_data)
 
 
 class MaintenanceDetailSerializer(serializers.HyperlinkedModelSerializer):
