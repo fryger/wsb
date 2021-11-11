@@ -27,7 +27,17 @@
 export default {
   methods: {
     extIcon(name) {
-      return name == "pdf" ? "fa-file-pdf" : "fa-file";
+      return name == "pdf"
+        ? "fa-file-pdf"
+        : name == "doc" || name == "docx"
+        ? "fa-file-word"
+        : name == "xls" || name == "xlsx"
+        ? "fa-file-excel"
+        : ["jpg", "jpeg", "png", "gif", "svg"].includes(name)
+        ? "fa-file-image"
+        : ["ogg", "mp4", "mov", "avi"].includes(name)
+        ? "fa-file-video"
+        : "fa-file";
     }
   },
   data() {
