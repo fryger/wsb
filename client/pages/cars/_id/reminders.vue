@@ -51,7 +51,7 @@
           <v-col><v-checkbox label="SMS" color="#55bab4"></v-checkbox></v-col>
           <v-col><v-checkbox label="Email" color="#55bab4"></v-checkbox></v-col>
         </v-row>
-        <v-switch label="Repetetive" color="#55bab4"></v-switch>
+        <!--<v-switch label="Repetetive" color="#55bab4"></v-switch>-->
         <v-btn block outlined color="#55bab4" dark
           ><span class="text-body-1 font-weight-bold">SET</span
           ><v-icon class="pl-2">mdi-alarm</v-icon></v-btn

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from pathlib import Path
 import os
 
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'django_filters',
     'corsheaders',
+    "django_apscheduler",
     'home.apps.HomeConfig'
 ]
 
@@ -142,3 +144,13 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+
+# EMAIL
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mailer.tracky@gmail.com'
+EMAIL_HOST_PASSWORD = 'zaq1@WSX'

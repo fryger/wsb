@@ -1,3 +1,5 @@
+from .scheduler import scheduler
+from .tasks import set_scheduler
 from datetime import date, datetime
 import dateutil.parser
 from django.db.models.query import QuerySet
@@ -21,8 +23,8 @@ from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .decorators import have_orgization
-from .models import Attachments, Car, CarPicture, Maintenance, Organization, User, Gps, CarDriversHistory, CarDamages, CarDamagesAttachment
-from .serializers import UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer, CarDriversHistorySerializer, CarDamagesSerializer
+from .models import Attachments, Car, CarPicture, Maintenance, Organization, Reminders, User, Gps, CarDriversHistory, CarDamages, CarDamagesAttachment
+from .serializers import ReminderCollectionSerializer, UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer, CarDriversHistorySerializer, CarDamagesSerializer
 
 
 class UserCreation(APIView):
@@ -382,3 +384,26 @@ class MyFileView(APIView):
             return Response(file_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TestView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        set_scheduler()
+        return Response("Done")
+
+
+class RemindersCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = ReminderCollectionSerializer
+
+    def get_queryset(self):
+        return Reminders.objects.filter(car=Car.objects.get(id=self.kwargs['pk']))
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)

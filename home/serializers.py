@@ -1,8 +1,9 @@
+from .tasks import set_scheduler
 import uuid
 
 from rest_framework import fields, serializers
 from rest_framework.parsers import DataAndFiles
-from .models import Attachments, CarDamages, CarDamagesAttachment, CarService, Organization, User, Car, Gps, Maintenance, CarPicture, CarDriversHistory
+from .models import Attachments, CarDamages, CarDamagesAttachment, CarService, Organization, Reminders, User, Car, Gps, Maintenance, CarPicture, CarDriversHistory
 from django.contrib.auth.password_validation import validate_password
 # from django.contrib.auth.models import User
 
@@ -235,3 +236,20 @@ class MaintenanceDetailSerializer(serializers.HyperlinkedModelSerializer):
         attachments = obj.attachments_set.all()
         response = MyFileSerializer(attachments, many=True).data
         return response
+
+
+class ReminderCollectionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Reminders
+        fields = ('title', 'description', 'when', 'sms', 'email')
+
+    def create(self, validated_data):
+
+        car = Car.objects.get(id=self.context.get(
+            'request').parser_context.get('kwargs').get('pk'))
+        task = set_scheduler(
+            car.driver.email, validated_data)
+        validated_data['car'] = car
+        validated_data['task'] = task
+        return super().create(validated_data)
