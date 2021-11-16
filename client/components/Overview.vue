@@ -245,6 +245,7 @@ export default {
     },
     car() {
       const car = this.$store.state.car.list;
+      this.value.plate = car.plate;
       this.value.bodyType = car.body;
       this.value.fuelType = car.fuel;
       this.value.status = car.status;
@@ -279,6 +280,7 @@ export default {
         model: "",
         mileage: "",
         vin: "",
+        plate: "",
         year: "",
         engine: "",
         driver: "",
@@ -300,7 +302,8 @@ export default {
           rule: "required|max_value:50"
         },
         { label: "Mileage", model: "mileage", rule: "required|numeric" },
-        { label: "VIN", model: "vin", rule: "required|alpha_num" }
+        { label: "VIN", model: "vin", rule: "required|alpha_num" },
+        { label: "License plate", model: "plate", rule: "required" }
       ],
       selectFieldData: [
         {
@@ -409,6 +412,7 @@ export default {
         model: this.value.model,
         mileage: this.value.mileage,
         vin: this.value.vin,
+        plate: this.value.plate,
         year: this.value.year,
         engine: this.value.engine
       };
