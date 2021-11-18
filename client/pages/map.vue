@@ -20,15 +20,14 @@ export default {
   computed: {
     ...mapState({
       popoutData: state => state.map.list
-    }),
-    markers() {}
+    })
   },
   components: {
     CarStatusPopup
   },
   data() {
     return {
-      //markers: [],
+      markers: [],
       map: []
     };
   },
@@ -42,10 +41,23 @@ export default {
       ]
     };
   },
+  watch: {
+    popoutData(value, oldValue) {
+      if (JSON.stringify(value) !== JSON.stringify(oldValue)) {
+        this.initPoints();
+      }
+    }
+  },
   mounted() {
     this.$store.dispatch("map/getLatestStatus");
     this.initMap();
     this.initPoints();
+    this.intervaljob = setInterval(() => {
+      this.$store.dispatch("map/getLatestStatus");
+    }, 3000);
+  },
+  beforeDestroy() {
+    clearInterval(this.intervaljob);
   },
   methods: {
     initMap() {
@@ -70,6 +82,9 @@ export default {
       //  this.markers.bindPopup(instance).openPopup();
     },
     initPoints() {
+      this.markers.forEach(element => {
+        this.map.removeLayer(element);
+      });
       this.popoutData.forEach(element => {
         var instance = new DetailPopup({
           propsData: {
@@ -88,14 +103,16 @@ export default {
           iconSize: [38, 95],
           popupAnchor: [0, -15]
         });
-        L.marker([element.gps?.lat || 12, element.gps?.lon || 12], {
-          icon: caricon
-        })
-          .bindPopup(instance, {
-            minWidth: 350
+        this.markers.push(
+          L.marker([element.gps?.lat || 12, element.gps?.lon || 12], {
+            icon: caricon
           })
-          .openPopup()
-          .addTo(this.map);
+            .bindPopup(instance, {
+              minWidth: 350
+            })
+            .openPopup()
+            .addTo(this.map)
+        );
       });
     }
   }
