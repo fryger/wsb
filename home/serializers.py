@@ -157,6 +157,27 @@ class GpsSerializer(serializers.ModelSerializer):
         return super(GpsSerializer, self).create(validated_data)
 
 
+class CarGPSLatestPointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Gps
+        fields = ("id", "lat", "lon", "alt", "speed", "datetime", )
+
+
+class CarLatestPointSerializer(serializers.ModelSerializer):
+    # gps_set = GpsSerializer(many=True, read_only=True)
+    gps = serializers.SerializerMethodField()
+    driver = DriverSerializer()
+
+    class Meta:
+        model = Car
+        fields = ("id", "name", "gps", "driver")
+
+    def get_gps(self, obj):
+        gps = obj.gps_set.last()
+        response = CarGPSLatestPointSerializer(gps).data
+        return response
+
+
 class MaintenanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Maintenance

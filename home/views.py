@@ -24,7 +24,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .decorators import have_orgization
 from .models import Attachments, Car, CarPicture, Maintenance, Organization, Reminders, User, Gps, CarDriversHistory, CarDamages, CarDamagesAttachment
-from .serializers import ReminderCollectionSerializer, UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer, CarDriversHistorySerializer, CarDamagesSerializer
+from .serializers import CarLatestPointSerializer, ReminderCollectionSerializer, UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer, CarDriversHistorySerializer, CarDamagesSerializer
 
 
 class UserCreation(APIView):
@@ -282,6 +282,26 @@ class GpsPointCreation(mixins.CreateModelMixin, generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class GpsPointsLatest(generics.GenericAPIView, mixins.ListModelMixin):
+    authentication_classes = [JWTAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = CarLatestPointSerializer
+
+    def get_queryset(self):
+
+        return Car.objects.filter(owner=self.request.user.organization)
+        if self.request.user.organization_permission == '9':
+            return Gps.objects.filter(car=Car.objects.filter(
+                owner=self.request.user.organization)).latest('datetime')
+        else:
+            return Gps.objects.filter(car=Car.objects.filter(
+                owner=self.request.user.organization,
+                driver=self.request.user)).latest('datetime')
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 
 class GpsPointLatest(generics.GenericAPIView, mixins.RetrieveModelMixin):

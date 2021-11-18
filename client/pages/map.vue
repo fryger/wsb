@@ -7,10 +7,29 @@
 </template>
 
 <script>
+import { mapGetters, mapActions, mapState } from "vuex";
+
+import Vue from "vue";
+import Vuetify from "vuetify";
+import CarStatusPopup from "../components/CarStatusPopup.vue";
+
+var DetailPopup = Vue.extend(CarStatusPopup);
+DetailPopup.use(Vuetify);
+
 export default {
+  computed: {
+    ...mapState({
+      popoutData: state => state.map.list
+    }),
+    markers() {}
+  },
+  components: {
+    CarStatusPopup
+  },
   data() {
     return {
-      map: {}
+      //markers: [],
+      map: []
     };
   },
   head() {
@@ -24,11 +43,13 @@ export default {
     };
   },
   mounted() {
+    this.$store.dispatch("map/getLatestStatus");
     this.initMap();
+    this.initPoints();
   },
   methods: {
     initMap() {
-      var mymap = L.map("mapid").setView([53.570007, 10.0104954], 5);
+      this.map = L.map("mapid").setView([53.570007, 10.0104954], 5);
       L.tileLayer(
         "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
         {
@@ -41,7 +62,41 @@ export default {
           accessToken:
             "pk.eyJ1IjoiZnJ5ZzNyIiwiYSI6ImNrdDkxNmwyZjExNWoycHBjY2JoaGRpOHEifQ.sPeP6CgU6f918oFMa2puog"
         }
-      ).addTo(mymap);
+      ).addTo(this.map);
+      //this.markers = L.marker([12, 12]).addTo(this.map);
+      // const instance = new DetailPopup({
+      // propsData: { type: "primary" }
+      //  }).$mount().$el;
+      //  this.markers.bindPopup(instance).openPopup();
+    },
+    initPoints() {
+      this.popoutData.forEach(element => {
+        var instance = new DetailPopup({
+          propsData: {
+            live: true,
+            lat: element.gps?.lat,
+            lon: element.gps?.lon,
+            alt: element.gps?.alt,
+            speed: element.gps?.speed,
+            carName: element.name,
+            firstname: element.driver?.first_name,
+            lastname: element.driver?.last_name
+          }
+        }).$mount().$el;
+        var caricon = L.icon({
+          iconUrl: require("../assets/3dcaricon.svg"),
+          iconSize: [38, 95],
+          popupAnchor: [0, -15]
+        });
+        L.marker([element.gps?.lat || 12, element.gps?.lon || 12], {
+          icon: caricon
+        })
+          .bindPopup(instance, {
+            minWidth: 350
+          })
+          .openPopup()
+          .addTo(this.map);
+      });
     }
   }
 };
