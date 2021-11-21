@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'django_filters',
     'corsheaders',
+    'phonenumber_field',
     "django_apscheduler",
     'home.apps.HomeConfig'
 ]
@@ -154,3 +155,9 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'mailer.tracky@gmail.com'
 EMAIL_HOST_PASSWORD = 'zaq1@WSX'
+
+# SMS
+
+SMS_API_KEY = 'd3ee18cc-851f-41fd-bbf4-a56cf2285def'
+SMS_API_PWD = 'drzewo456'
+SMS_API_FROM = 'TEST'

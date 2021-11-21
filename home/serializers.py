@@ -270,7 +270,7 @@ class ReminderCollectionSerializer(serializers.ModelSerializer):
         car = Car.objects.get(id=self.context.get(
             'request').parser_context.get('kwargs').get('pk'))
         task = set_scheduler(
-            car.driver.email, validated_data)
+            car.driver.email, car.driver.phone, validated_data)
         validated_data['car'] = car
         validated_data['task'] = task
         return super().create(validated_data)

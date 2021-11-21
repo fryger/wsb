@@ -9,6 +9,7 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.auth.models import AbstractUser
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 def get_file_path(instance, filename):
@@ -40,6 +41,7 @@ class User(AbstractUser):
         Organization, blank=True, null=True, default=None, on_delete=models.SET_NULL)
     organization_permission = models.CharField(
         choices=PERMISSION, blank=True, null=True, default=None, max_length=1, verbose_name='Acces level')
+    phone = PhoneNumberField(null=True, blank=True, unique=True)
 
 
 class Car(models.Model):
