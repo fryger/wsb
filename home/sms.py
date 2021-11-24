@@ -3,7 +3,6 @@ from django.conf import settings
 
 
 def sms(phone, data):
-    print(phone, data)
     query = {'key': settings.SMS_API_KEY,
              'password': settings.SMS_API_PWD,
              'from': settings.SMS_API_FROM,

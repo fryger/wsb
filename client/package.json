@@ -29,11 +29,14 @@
     "vgauge": "^1.2.12-rc3",
     "vue-apexcharts": "^1.6.2",
     "vue-chartjs": "^3.5.1",
+    "vue-geo-heat-maps": "^0.2.13",
+    "vue-map-chart": "0.0.2",
     "vue-morris": "^1.1.0",
     "vue-svg-gauge": "^1.2.1",
     "vue2-leaflet": "^2.7.1",
     "vuelidate": "^0.7.6",
-    "vuetify": "^2.5.5"
+    "vuetify": "^2.5.5",
+    "x5-gmaps": "^0.5.9"
   },
   "devDependencies": {
     "@nuxtjs/vuetify": "^1.12.1"

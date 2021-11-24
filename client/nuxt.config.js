@@ -53,6 +53,7 @@ export default {
   },
 
   auth: {
+    redirect: { home: "/dashboard" },
     strategies: {
       local: {
         scheme: "refresh",

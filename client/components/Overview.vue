@@ -142,6 +142,7 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-row> </v-row>
     <v-row>
       <v-col>
         <v-card class="mt-12" flat>
