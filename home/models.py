@@ -79,7 +79,7 @@ class Car(models.Model):
     token = models.CharField(
         max_length=32, null=False)
     plate = models.CharField(max_length=20)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     manufacturer = models.CharField(max_length=255)
     model = models.CharField(max_length=255)
     mileage = models.PositiveIntegerField()

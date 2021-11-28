@@ -160,4 +160,4 @@ EMAIL_HOST_PASSWORD = 'zaq1@WSX'
 
 SMS_API_KEY = 'd3ee18cc-851f-41fd-bbf4-a56cf2285def'
 SMS_API_PWD = 'drzewo456'
-SMS_API_FROM = 'TEST'
+SMS_API_FROM = 'Tracky'

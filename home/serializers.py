@@ -1,3 +1,4 @@
+from home.guardian import car_guardian
 from .tasks import set_scheduler
 import uuid
 
@@ -152,8 +153,10 @@ class GpsSerializer(serializers.ModelSerializer):
         read_only_fields = ['car', 'id']
 
     def create(self, validated_data):
+
         validated_data['car'] = Car.objects.get(
             token=self.context['request'].META['HTTP_CAR'])
+        car_guardian(validated_data)
         return super(GpsSerializer, self).create(validated_data)
 
 
@@ -271,6 +274,7 @@ class ReminderCollectionSerializer(serializers.ModelSerializer):
             'request').parser_context.get('kwargs').get('pk'))
         task = set_scheduler(
             car.driver.email, car.driver.phone, validated_data)
+
         validated_data['car'] = car
         validated_data['task'] = task
         return super().create(validated_data)

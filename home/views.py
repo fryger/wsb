@@ -26,6 +26,16 @@ from .decorators import have_orgization
 from .models import Attachments, Car, CarPicture, Maintenance, Organization, Reminders, User, Gps, CarDriversHistory, CarDamages, CarDamagesAttachment
 from .serializers import CarLatestPointSerializer, ReminderCollectionSerializer, UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer, CarDriversHistorySerializer, CarDamagesSerializer
 
+from .guardian import *
+
+
+class TestAPI(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+
+        return Response(status=status.HTTP_200_OK)
+
 
 class UserCreation(APIView):
     permission_classes = [AllowAny]
