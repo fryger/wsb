@@ -59,7 +59,7 @@
       </v-col>
       <v-col cols="12" lg="8" md="5" sm="12" class="pa-12">
         <v-row>
-          <v-card class="ma-2" width="300" v-for="index in 7" :key="index">
+          <v-card class="ma-2" width="300" v-for="index in 1" :key="index">
             <v-btn
               depressed
               text
@@ -94,6 +94,32 @@
                   fa-redo-alt
                 </v-icon>
                 REPETETIVE
+              </v-chip>
+            </v-card-actions>
+          </v-card>
+          <v-card class="ma-2" width="300" v-for="index in 1" :key="index">
+            <v-btn
+              depressed
+              text
+              absolute
+              color="red"
+              style="height:13px; left:236px;"
+              ><v-icon x-small>fa-times</v-icon></v-btn
+            >
+
+            <v-card-title>Winter tire change</v-card-title>
+            <v-card-subtitle>{{ new Date() }}</v-card-subtitle>
+            <v-card-text>
+              Please visit nearest shop to change tires to winter!
+            </v-card-text>
+            <span class="ma-4">Notifications</span>
+            <v-divider></v-divider>
+            <v-card-actions class="mt-1">
+              <v-chip class="mr-2" label color="#55bab4" outlined>
+                <v-icon left>
+                  fa-envelope
+                </v-icon>
+                EMAIL
               </v-chip>
             </v-card-actions>
           </v-card>

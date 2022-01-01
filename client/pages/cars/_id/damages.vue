@@ -2,7 +2,7 @@
   <v-container>
     <v-row justify="center">
       <v-expansion-panels popout>
-        <v-expansion-panel class="mt-2" v-for="(item, i) in 50" :key="i">
+        <v-expansion-panel class="mt-2" v-for="(item, i) in 3" :key="i">
           <v-expansion-panel-header>
             <template v-slot:default="{ open }">
               <v-row>

@@ -64,7 +64,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" lg="3">
-        <v-card min-height="300px">
+        <v-card min-height="300px" height="100%">
           <v-card-title>Drivers count </v-card-title>
           <v-divider class="mx-6"></v-divider>
           <v-card-text class="text-center my-12">
@@ -72,7 +72,57 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="12" lg="6"> </v-col>
+      <v-col cols="12" lg="6">
+        <v-card min-height="300px" height="100%">
+          <v-card-title>Fuel cost</v-card-title>
+          <v-divider class="mx-6"></v-divider>
+          <v-card-text class="text-center my-12">
+            <v-row align="center" justify="center">
+              <v-col cols="12" lg="3">
+                <p>
+                  <v-icon class="mb-4" color="green" size="60"
+                    >mdi-gas-station</v-icon
+                  >
+                  <span class="text-h4">95</span>
+                </p>
+                <p class="text-h3">
+                  {{ fuel.petrol95 }}
+                </p>
+              </v-col>
+              <v-divider vertical></v-divider>
+              <v-col cols="12" lg="3">
+                <p>
+                  <v-icon class="mb-4" color="green" size="60"
+                    >mdi-gas-station</v-icon
+                  >
+                  <span class="text-h4">98</span>
+                </p>
+                <p class="text-h3">
+                  {{ fuel.petrol98 }}
+                </p>
+              </v-col>
+              <v-divider vertical></v-divider>
+              <v-col cols="12" lg="3">
+                <v-icon class="mb-8" color="black" size="60"
+                  >fa fa-oil-can</v-icon
+                >
+                <p class="text-h3">
+                  {{ fuel.diesel }}
+                </p>
+              </v-col>
+              <v-divider vertical></v-divider>
+              <v-col cols="12" lg="3">
+                <v-icon class="mb-8" color="red" size="60"
+                  >mdi-fire-circle</v-icon
+                >
+                <p class="text-h3">
+                  {{ fuel.lpg }}
+                </p>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -81,6 +131,12 @@
 export default {
   data() {
     return {
+      fuel: {
+        petrol95: "5.75",
+        petrol98: "6.03",
+        diesel: "5.78",
+        lpg: "3.19"
+      },
       option: {
         series: [
           {

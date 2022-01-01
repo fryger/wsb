@@ -88,7 +88,7 @@ export default {
       this.popoutData.forEach(element => {
         var instance = new DetailPopup({
           propsData: {
-            live: true,
+            live: false,
             lat: element.gps?.lat,
             lon: element.gps?.lon,
             alt: element.gps?.alt,

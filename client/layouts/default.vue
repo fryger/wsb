@@ -67,7 +67,8 @@ export default {
       ["mdi-domain", "Organization", "/organization"],
       ["mdi-map", "Map", "/map"],
       ["mdi-account", "Drivers", "/users"],
-      ["mdi-car", "Cars", "/cars"]
+      ["mdi-car", "Cars", "/cars"],
+      ["mdi-text-box", "Documents", "/document"]
     ]
   }),
   mounted() {

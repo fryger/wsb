@@ -201,3 +201,12 @@ class Reminders(models.Model):
     email = models.BooleanField(default=False)
     task = models.CharField(max_length=255, null=True)
     #repetetive = models.BooleanField(default=False)
+
+
+class Documents(models.Model):
+    organization = models.ForeignKey(Organization, on_delete=CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    tags = models.CharField(max_length=500)
+    file = models.FileField(upload_to=get_file_path)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
