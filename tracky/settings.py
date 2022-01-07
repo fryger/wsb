@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'phonenumber_field',
     "django_apscheduler",
-    'home.apps.HomeConfig'
+    'home.apps.HomeConfig',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

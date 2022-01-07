@@ -27,14 +27,7 @@ from .models import Attachments, Car, CarPicture, Maintenance, Organization, Rem
 from .serializers import CarLatestPointSerializer, ReminderCollectionSerializer, UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer, CarDriversHistorySerializer, CarDamagesSerializer
 
 from .guardian import *
-
-
-class TestAPI(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-
-        return Response(status=status.HTTP_200_OK)
+from .scrapper import *
 
 
 class UserCreation(APIView):
@@ -64,8 +57,6 @@ class OrganizationCreationView(APIView):
 class OrganizationCollection(mixins.ListModelMixin, mixins.CreateModelMixin,
                              mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
 
-    authentication_classes = [JWTAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
     serializer_class = OrganizationSerializer
 
     def get_queryset(self):
@@ -111,8 +102,6 @@ class OrganizationCollection(mixins.ListModelMixin, mixins.CreateModelMixin,
 class UserDetail(mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin,
                  generics.GenericAPIView):
 
-    authentication_classes = [JWTAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
     serializer_class = ProfileSerializer
 
     def get_queryset(self):
@@ -185,8 +174,7 @@ class UpdateDriverPassword(mixins.UpdateModelMixin, generics.GenericAPIView):
 
 
 class CarCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    authentication_classes = [JWTAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+
     serializer_class = CarSerializer
 
     def get_queryset(self):
@@ -207,8 +195,7 @@ class CarCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.Gen
 
 class CarDetail(mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
                 mixins.UpdateModelMixin, generics.GenericAPIView):
-    authentication_classes = [JWTAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+
     serializer_class = CarSerializer
 
     def get_queryset(self):
@@ -228,8 +215,7 @@ class CarDetail(mixins.RetrieveModelMixin, mixins.DestroyModelMixin,
 
 
 class CarDriverHistoryCollection(mixins.ListModelMixin, generics.GenericAPIView):
-    authentication_classes = [JWTAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+
     serializer_class = CarDriversHistorySerializer
 
     def get_queryset(self):
@@ -248,8 +234,6 @@ class CarDriverHistoryCollection(mixins.ListModelMixin, generics.GenericAPIView)
 
 class GpsCollection(mixins.ListModelMixin, generics.GenericAPIView):
 
-    authentication_classes = [JWTAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
     serializer_class = GpsSerializer
 
     filter_backends = [filters.DjangoFilterBackend, SearchFilter]
@@ -295,8 +279,7 @@ class GpsPointCreation(mixins.CreateModelMixin, generics.GenericAPIView):
 
 
 class GpsPointsLatest(generics.GenericAPIView, mixins.ListModelMixin):
-    authentication_classes = [JWTAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+
     serializer_class = CarLatestPointSerializer
 
     def get_queryset(self):
@@ -315,8 +298,7 @@ class GpsPointsLatest(generics.GenericAPIView, mixins.ListModelMixin):
 
 
 class GpsPointLatest(generics.GenericAPIView, mixins.RetrieveModelMixin):
-    authentication_classes = [JWTAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+
     serializer_class = GpsSerializer
 
     def get_object(self, *args, **kwargs):
@@ -416,17 +398,8 @@ class MyFileView(APIView):
             return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TestView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, format=None):
-        set_scheduler()
-        return Response("Done")
-
-
 class RemindersCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    authentication_classes = [JWTAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+
     serializer_class = ReminderCollectionSerializer
 
     def get_queryset(self):

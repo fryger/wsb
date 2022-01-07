@@ -83,6 +83,7 @@ export default {
         { text: "Model year", value: "year", align: "center" },
         { text: "Mileage (km)", value: "mileage", align: "center" },
         { text: "VIN", value: "vin", align: "center" },
+        { text: "Registration plate", value: "plate", align: "center" },
         { text: "Driver", value: "driver", align: "center" },
         { text: "Status", value: "status", align: "center" }
       ]

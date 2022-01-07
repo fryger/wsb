@@ -3,6 +3,7 @@ import os
 from io import SEEK_END
 from django.db import models
 from datetime import datetime, date
+from django.db.models.base import Model
 #from django.contrib.auth.models import User
 from django.db.models.deletion import CASCADE, SET_NULL
 from django.db.models.signals import post_save, pre_delete
@@ -178,7 +179,7 @@ class CarDocuments(models.Model):
 
 class Maintenance(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    driver = models.ForeignKey(User, on_delete=models.CASCADE)
+    driver = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     shop = models.ForeignKey(CarService, null=True, on_delete=models.SET_NULL)
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=2000)
@@ -210,3 +211,11 @@ class Documents(models.Model):
     tags = models.CharField(max_length=500)
     file = models.FileField(upload_to=get_file_path)
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+
+class FuelPrices(models.Model):
+    pb95 = models.CharField(max_length=3)
+    pb98 = models.CharField(max_length=3)
+    on = models.CharField(max_length=3)
+    lpg = models.CharField(max_length=3)
+    reported = models.DateTimeField(auto_now_add=True)

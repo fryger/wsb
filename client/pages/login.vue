@@ -51,6 +51,11 @@
             </v-container>
           </v-form>
         </v-responsive>
+        <v-card-actions>
+          <v-btn absolute right bottom x-small elevation="0" to="/register"
+            >REGISTER ORGANZIATION</v-btn
+          >
+        </v-card-actions>
       </v-card>
     </div>
   </v-app>
