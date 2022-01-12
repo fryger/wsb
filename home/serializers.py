@@ -138,7 +138,6 @@ class CarSerializer(serializers.ModelSerializer):
         read_only_fields = ['owner', 'token']
 
     def create(self, validated_data):
-
         if 'token' not in validated_data:
             validated_data['token'] = uuid.uuid1().hex
         if 'owner' not in validated_data:

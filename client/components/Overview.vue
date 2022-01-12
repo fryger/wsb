@@ -159,27 +159,27 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" xl="3"
+      <v-col cols="12" md="3" xl="3"
         ><Chart
           chartTitle="Speed"
           :data="[this.$store.state.gps.list.speed]"
           unit="KPH"
         />
       </v-col>
-      <v-col cols="12" xl="3"
+      <v-col cols="12" md="3" xl="3"
         ><Chart
           chartTitle="RPM"
           :data="[this.$store.state.gps.list.rpm]"
           unit="RPM"
         />
       </v-col>
-      <v-col cols="12" xl="3">
+      <v-col cols="12" md="3" xl="3">
         <Chart
           chartTitle="Oil temperature"
           :data="[this.$store.state.gps.list.oiltemp]"
           unit="º"
       /></v-col>
-      <v-col cols="12" xl="3"
+      <v-col cols="12" md="3" xl="3"
         ><Chart
           chartTitle="Coolant temperature"
           :data="[this.$store.state.gps.list.colanttemp]"
@@ -370,7 +370,7 @@ export default {
     }, 3000);
     this.initMap();
   },
-
+gi
   methods: {
     uploadFile() {
       document.getElementById("fileUpload").click();
