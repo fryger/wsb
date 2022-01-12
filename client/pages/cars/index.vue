@@ -4,7 +4,7 @@
       <v-icon slot="prependIcon" class="pr-3" large>mdi-magnify</v-icon>
       <v-text-field label="Search" height="50" v-model="search"></v-text-field>
     </v-row>
-    <v-row>
+    <v-row v-if="this.$store.$auth.user[0].organization_permission == 9">
       <v-btn
         @click="dialog = true"
         color="green"
@@ -158,9 +158,12 @@ export default {
     this.$store.dispatch("cars/getCars");
   },
   computed: {
+    ...mapGetters({ searchCar: "cars/searchCar" }),
     ...mapGetters({ getDriverById: "driver/idDriver" }),
     cars() {
-      return this.$store.state.cars.list;
+      return this.search == ""
+        ? this.$store.state.cars.list
+        : this.searchCar(this.search.toLowerCase());
     }
   }
 };

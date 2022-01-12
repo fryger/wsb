@@ -79,7 +79,7 @@ class Car(models.Model):
         User, null=True, blank=True, on_delete=models.SET_NULL)
     token = models.CharField(
         max_length=32, null=False)
-    plate = models.CharField(max_length=20)
+    plate = models.CharField(max_length=20, null=True, blank=True)
     name = models.CharField(max_length=255, unique=True)
     manufacturer = models.CharField(max_length=255)
     model = models.CharField(max_length=255)

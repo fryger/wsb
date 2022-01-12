@@ -22,7 +22,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .decorators import have_orgization
+from .decorators import have_orgization, admin_access_check
 from .models import Attachments, Car, CarPicture, Maintenance, Organization, Reminders, User, Gps, CarDriversHistory, CarDamages, CarDamagesAttachment
 from .serializers import CarLatestPointSerializer, ReminderCollectionSerializer, UserSerializer, OrganizationSerializer, ProfileSerializer, DriverSerializer, DriverPasswordSerializer, CarSerializer, GpsSerializer, MaintenanceSerializer, MaintenanceDetailSerializer, MyFileSerializer, OrganizationCreationSerializer, CarPictureSerializer, CarDriversHistorySerializer, CarDamagesSerializer
 
@@ -146,8 +146,7 @@ class DriverCollection(mixins.ListModelMixin, mixins.UpdateModelMixin,
 
 class DriverDetail(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
                    mixins.DestroyModelMixin, generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+
     serializer_class = DriverSerializer
 
     def get_queryset(self):
@@ -162,8 +161,6 @@ class DriverDetail(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
 
 class UpdateDriverPassword(mixins.UpdateModelMixin, generics.GenericAPIView):
 
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
     serializer_class = DriverPasswordSerializer
 
     def get_queryset(self):
@@ -186,7 +183,7 @@ class CarCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.Gen
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
-    # Zablokować dla adminów organizacji
+    @method_decorator(admin_access_check())
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
@@ -315,8 +312,7 @@ class GpsPointLatest(generics.GenericAPIView, mixins.RetrieveModelMixin):
 
 
 class MaintenanceCollection(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    # authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    #
     serializer_class = MaintenanceSerializer
 
     def get_queryset(self):
@@ -330,8 +326,7 @@ class MaintenanceCollection(mixins.ListModelMixin, mixins.CreateModelMixin, gene
 
 
 class MaintenanceDetails(mixins.RetrieveModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+
     serializer_class = MaintenanceDetailSerializer
 
     def get_object(self):
