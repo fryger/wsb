@@ -1,3 +1,3 @@
-![Logo](https://i.imgur.com/nHYKeFm.png "Logo")
+![Logo](https://i.imgur.com/jkCOetY.png "TRACKY")
 
-# TRACKY - Car fleet managment system
+## TRACKY - Car fleet managment system
