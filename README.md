@@ -14,7 +14,7 @@ Tracky is simple but readily adaptable fleet managment system.
 ### IMAGES
 
 <img src="https://i.imgur.com/2rEdpGm.png" width="400" height="200"> <img src="https://i.imgur.com/PrU8ooC.png" width="400" height="200">  
- <img src="https://i.imgur.com/zQwgPvt.png" width="200" height="100"> <img src="https://i.imgur.com/0KdIf5n.png" width="200" height="100">
+ <img src="https://i.imgur.com/zQwgPvt.png" width="400" height="200"> <img src="https://i.imgur.com/0KdIf5n.png" width="400" height="200">
 
 </br>
 </br>
