@@ -370,7 +370,6 @@ export default {
     }, 3000);
     this.initMap();
   },
-gi
   methods: {
     uploadFile() {
       document.getElementById("fileUpload").click();
