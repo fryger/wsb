@@ -13,11 +13,10 @@ Tracky is simple but readily adaptable fleet managment system.
 
 ### IMAGES
 
-<br/>
 <img src="https://i.imgur.com/zQwgPvt.png" width="200" height="100"> <img src="https://i.imgur.com/0KdIf5n.png" width="200" height="100"> <img src="https://i.imgur.com/2rEdpGm.png" width="200" height="100"> <img src="https://i.imgur.com/PrU8ooC.png" width="200" height="100">
 
 ### Stack
 
 <br/>
 
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-original.svg" width="60"/> :heart: <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original-wordmark.svg" width="60"/>
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-original.svg" width="300"/> :heart: <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original-wordmark.svg" width="300"/>
