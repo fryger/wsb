@@ -4,11 +4,11 @@
 
 Tracky is simple but readily adaptable fleet managment system.
 
-:heavy_check_mark: Drivers managment
-:heavy_check_mark: Fleet documents store
-:heavy_check_mark: Fleet statistic summary
-:heavy_check_mark: Car tracking and telemetry
-:heavy_check_mark: Car documents store
-:heavy_check_mark: Accidents list
+:heavy_check_mark: Drivers managment<br/>
+:heavy_check_mark: Fleet documents store<br/>
+:heavy_check_mark: Fleet statistic summary<br/>
+:heavy_check_mark: Car tracking and telemetry<br/>
+:heavy_check_mark: Car documents store<br/>
+:heavy_check_mark: Accidents list<br/>
 
-| ![](https://i.imgur.com/zQwgPvt.png) | ![](https://i.imgur.com/0KdIf5n.png) | ![](https://i.imgur.com/2rEdpGm.png) | ![](https://i.imgur.com/PrU8ooC.png) |
+| ![](https://i.imgur.com/zQwgPvt.png | width="200") | ![](https://i.imgur.com/0KdIf5n.png) | ![](https://i.imgur.com/2rEdpGm.png) | ![](https://i.imgur.com/PrU8ooC.png) |
