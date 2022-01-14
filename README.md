@@ -15,8 +15,10 @@ Tracky is simple but readily adaptable fleet managment system.
 
 <img src="https://i.imgur.com/zQwgPvt.png" width="200" height="100"> <img src="https://i.imgur.com/0KdIf5n.png" width="200" height="100"> <img src="https://i.imgur.com/2rEdpGm.png" width="200" height="100"> <img src="https://i.imgur.com/PrU8ooC.png" width="200" height="100">
 
-### Stack
+</br>
+</br>
 
-<br/>
+### BUILD WITH
 
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-original.svg" width="100"/> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original-wordmark.svg" width="100"/> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original-wordmark.svg" width="100"/> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/npm/npm-original-wordmark.svg" width="100"/> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" width="100"/> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" width="100"/>
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-original.svg" width="100"/>  
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original-wordmark.svg" width="100"/>
