@@ -20,5 +20,6 @@ Tracky is simple but readily adaptable fleet managment system.
 
 ### BUILD WITH
 
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-original.svg" width="100"/>  
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original-wordmark.svg" width="100"/>
+<p align="center">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-original.svg" width="100"/> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original-wordmark.svg" width="100"/>
+<p>
